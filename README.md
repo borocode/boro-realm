@@ -15,11 +15,12 @@ Welcome to **Boro Realm** — the premier high-altitude cross-play Minecraft uni
 
 Connect seamlessly from any modern **Java Edition** or **Bedrock Edition** client (PC, Mobile, Switch, Xbox, PlayStation):
 
-| Client Type | Server Address / Host | Port | Version |
-| :--- | :--- | :--- | :--- |
-| **Java Edition** | `bore.pub` *(or `realm.boroghor.com`)* | `43991` | `1.20` – `1.21.4+` (ViaVersion) |
-| **Bedrock Edition** | `10.0.0.54` / `bore.pub` | `19132` | Current Bedrock (Geyser/Floodgate) |
-| **LAN / Local** | `localhost` / `10.0.0.54` | `25565` (Java) / `19132` (Bedrock) | All |
+| Client Type | Server Address / Host | Port | Version | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| **Java Edition** | `realm.boroghor.com` | `25565` *(Default)* | `1.20` – `1.21.4+` | Cloudflare SRV auto-routes to instance. No custom port needed! |
+| **Bedrock Edition** | `signaling-ala.tun.ply.gg` | `18629` | Latest Bedrock | iOS, Android, Win10, Consoles (Geyser/Floodgate). Direct IP: `147.185.221.216` |
+| **Java Direct Fallback**| `bore.pub` *(or `signaling-mongolia.tun.ply.gg`)* | `43991` *(or `18612`)* | `1.20` – `1.21.4+` | Fallback if your DNS resolver ignores SRV records |
+| **LAN / Local Host** | `localhost` / `10.0.0.54` | `25565` (Java) / `19132` (Bedrock) | All | Internal home network only |
 
 > [!TIP]
 > **No mods or custom resource packs are required!** Simply add the server in your multiplayer menu and join.

@@ -9,28 +9,32 @@
 Boro Realm runs on a high-efficiency multi-container Docker Compose architecture hosted locally and securely tunneled to the public internet:
 
 ```
-                  [ PUBLIC PLAYERS: JAVA & BEDROCK ]
-                                   |
-         +-------------------------+-------------------------+
-         | (Java Edition)                                    | (Bedrock Edition)
-         v                                                   v
-   bore.pub:43991                                    10.0.0.54:19132
-         |                                                   |
-         | (TCP Tunnel)                                      | (UDP/TCP Direct)
-         v                                                   v
-+------------------+                              +--------------------+
-|   boro-tunnel    |                              |   boro-minecraft   |
-| (bore forwarder) |                              |    (Paper 1.21)    |
-+--------+---------+                              +---------+----------+
-         |                                                  ^
-         +--------> [ mc-crossplay:25565 ] -----------------+
-                                                            ^
-                                                            | RCON (:25575)
-                                                            | & Log Volume
-                                                  +---------+----------+
-                                                  |    boro-bridge     |
-                                                  | (Python Automation)|
-                                                  +--------------------+
+                          [ PUBLIC PLAYERS & WEB VISITORS ]
+                                          |
+         +--------------------------------+-------------------------------+
+         | (Web Wiki: HTTPS)              | (Java Edition)                | (Bedrock Edition)
+         v                                v                               v
+realm.boroghor.com              realm.boroghor.com             signaling-ala.tun.ply.gg:18629
+         |                      (_minecraft._tcp SRV)                     |
+         v                                |                               v
+[Cloudflare Argo Tunnel]                  v                       [Playit UDP Tunnel]
+         |                          bore.pub:43991                        |
+         v                                |                               |
+   boro-web:80                            v                               |
+   (Nginx Alpine)                    boro-tunnel                          |
+ (Port 8767 Host)                  (Bore TCP Client)                      |
+                                          |                               |
+                                          +----------->+<-----------------+
+                                                       |
+                                            [ boro-minecraft: Paper 1.21.4 ]
+                                            • Java: 25565 / RCON: 25575
+                                            • Bedrock: 19132 UDP (Geyser)
+                                                       ^
+                                                       | RCON & Log Volume
+                                            +----------+----------+
+                                            |     boro-bridge     |
+                                            | (Python Automation) |
+                                            +---------------------+
 ```
 
 ---

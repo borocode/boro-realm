@@ -100,39 +100,95 @@
       </p>
 
       <!-- Quick Connect Box -->
-      <div class="mt-8 max-w-2xl mx-auto p-4 sm:p-6 glass-card rounded-2xl shadow-2xl">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="mt-8 max-w-3xl mx-auto p-4 sm:p-6 glass-card rounded-2xl shadow-2xl">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <!-- Java Edition -->
-          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-left">
-            <div class="flex items-center justify-between text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">
-              <span>☕ Java Edition</span>
-              <span class="text-slate-400 font-normal">v1.20 - 1.21.4</span>
+          <div class="bg-slate-900/90 p-4 rounded-xl border border-emerald-900/40 text-left flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-emerald-400 font-bold uppercase tracking-wider mb-2">
+                <span class="flex items-center space-x-1.5">
+                  <span>☕</span>
+                  <span>Java Edition</span>
+                </span>
+                <span class="text-xs font-mono text-emerald-500/80 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/20">1.20 - 1.21.4</span>
+              </div>
+              
+              <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Server Address</label>
+              <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
+                <span id="java-ip" class="text-emerald-300 font-semibold selection:bg-emerald-800">realm.boroghor.com</span>
+                <button onclick="copyToClipboard('realm.boroghor.com', this)" class="text-xs text-emerald-400 hover:text-emerald-300 font-sans font-medium px-2.5 py-1 rounded bg-emerald-950/90 hover:bg-emerald-900/90 border border-emerald-500/40 transition">
+                  Copy
+                </button>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-2 font-sans flex items-center space-x-1">
+                <span>⚡</span>
+                <span>Default port <code class="text-slate-300 font-mono">25565</code> (Auto-routed via SRV)</span>
+              </p>
             </div>
-            <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 mt-2">
-              <span id="java-ip">bore.pub:43991</span>
-              <button onclick="copyToClipboard('bore.pub:43991', this)" class="text-xs text-emerald-400 hover:text-emerald-300 font-sans font-medium px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40">
-                Copy
+
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+              <span>Direct fallback:</span>
+              <button onclick="copyToClipboard('bore.pub:43991', this)" class="hover:text-emerald-400 text-slate-400 underline decoration-slate-600 underline-offset-2">
+                bore.pub:43991
               </button>
             </div>
           </div>
 
           <!-- Bedrock Edition -->
-          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-left">
-            <div class="flex items-center justify-between text-xs text-amber-400 font-bold uppercase tracking-wider mb-1">
-              <span>📱 Bedrock Edition</span>
-              <span class="text-slate-400 font-normal">Mobile / Console</span>
+          <div class="bg-slate-900/90 p-4 rounded-xl border border-amber-900/40 text-left flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-amber-400 font-bold uppercase tracking-wider mb-2">
+                <span class="flex items-center space-x-1.5">
+                  <span>📱</span>
+                  <span>Bedrock Edition</span>
+                </span>
+                <span class="text-xs font-mono text-amber-500/80 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/20">Mobile • Win • Console</span>
+              </div>
+
+              <!-- Bedrock Server Address -->
+              <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Server Address</label>
+              <div class="font-mono text-xs sm:text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
+                <span id="bedrock-host" class="text-amber-300 font-semibold truncate mr-2">signaling-ala.tun.ply.gg</span>
+                <button onclick="copyToClipboard('signaling-ala.tun.ply.gg', this)" class="text-xs text-amber-400 hover:text-amber-300 font-sans font-medium px-2.5 py-1 rounded bg-amber-950/90 hover:bg-amber-900/90 border border-amber-500/40 transition shrink-0">
+                  Copy
+                </button>
+              </div>
+
+              <!-- Bedrock Port -->
+              <div class="mt-2.5">
+                <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Port</label>
+                <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
+                  <span id="bedrock-port" class="text-amber-300 font-semibold">18629</span>
+                  <button onclick="copyToClipboard('18629', this)" class="text-xs text-amber-400 hover:text-amber-300 font-sans font-medium px-2.5 py-1 rounded bg-amber-950/90 hover:bg-amber-900/90 border border-amber-500/40 transition">
+                    Copy
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 mt-2">
-              <span id="bedrock-ip">10.0.0.54 : 19132</span>
-              <button onclick="copyToClipboard('10.0.0.54:19132', this)" class="text-xs text-amber-400 hover:text-amber-300 font-sans font-medium px-2 py-0.5 rounded bg-amber-950/80 border border-amber-500/40">
-                Copy
+
+            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+              <span>Direct IP:</span>
+              <button onclick="copyToClipboard('147.185.221.216', this)" class="hover:text-amber-400 text-slate-400 underline decoration-slate-600 underline-offset-2">
+                147.185.221.216
               </button>
             </div>
           </div>
         </div>
-        <p class="text-xs text-slate-500 mt-3 font-mono">
-          Alternate Java Host: <span class="text-slate-400">realm.boroghor.com</span> • Zero mods required to connect
-        </p>
+
+        <div class="mt-4 pt-3 border-t border-slate-800/60 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-mono">
+          <span class="flex items-center space-x-1">
+            <span class="text-emerald-400">●</span>
+            <span>Online 24/7 Cross-Play</span>
+          </span>
+          <span class="flex items-center space-x-1">
+            <span>🛡️</span>
+            <span>Grief-Proof Verification Gauntlet</span>
+          </span>
+          <span class="flex items-center space-x-1">
+            <span>⚡</span>
+            <span>Zero Mods or Client Downloads Required</span>
+          </span>
+        </div>
       </div>
     </div>
   </header>
