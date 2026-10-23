@@ -15,15 +15,17 @@ Welcome to **Boro Realm** — the premier high-altitude cross-play Minecraft uni
 
 Connect seamlessly from any modern **Java Edition** or **Bedrock Edition** client (PC, Mobile, Switch, Xbox, PlayStation):
 
+**Official Server Host:** `play.boroghor.com`
+
 | Client Type | Server Address / Host | Port | Version | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **Java Edition** | `realm.boroghor.com` | `25565` *(Default)* | `1.20` – `1.21.4+` | Cloudflare SRV auto-routes to instance. No custom port needed! |
-| **Bedrock Edition** | `signaling-ala.tun.ply.gg` | `18629` | Latest Bedrock | iOS, Android, Win10, Consoles (Geyser/Floodgate). Direct IP: `147.185.221.216` |
-| **Java Direct Fallback**| `bore.pub` *(or `signaling-mongolia.tun.ply.gg`)* | `43991` *(or `18612`)* | `1.20` – `1.21.4+` | Fallback if your DNS resolver ignores SRV records |
-| **LAN / Local Host** | `localhost` / `10.0.0.54` | `25565` (Java) / `19132` (Bedrock) | All | Internal home network only |
+| **Java Edition** | `play.boroghor.com` | `25565` *(Default)* | `1.20` – `1.21.4+` | Cloudflare SRV auto-routes to instance. No port needed! |
+| **Bedrock Edition** | `play.boroghor.com` | `18629` | Latest Bedrock | iOS, Android, Win10, Consoles (Geyser/Floodgate). |
+| **Java Direct Fallback**| `bore.pub` | `43991` | `1.20` – `1.21.4+` | Fallback if your DNS resolver ignores SRV records |
+| **Bedrock Direct Fallback**| `signaling-ala.tun.ply.gg` | `18629` | Latest Bedrock | Direct Playit global tunnel address |
 
 > [!TIP]
-> **No mods or custom resource packs are required!** Simply add the server in your multiplayer menu and join.
+> **No mods or custom resource packs are required!** Simply add `play.boroghor.com` in your multiplayer menu and join.
 
 ---
 
