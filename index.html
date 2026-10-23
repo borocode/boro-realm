@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ BORO REALM — Sovereign Alpine Cross-Play Minecraft</title>
+  <meta name="description" content="Official Wiki and Frontpage for Boro Realm. High-altitude Alpine Sovereign Estate, Verification Gauntlet, and Untamed Wild Frontier Survival.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              green: '#10b981',
+              emerald: '#059669',
+              gold: '#f59e0b',
+              dark: '#0a0d14',
+              card: '#121722',
+              cardBorder: '#1e293b',
+              accent: '#38bdf8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background: radial-gradient(circle at 50% -20%, #064e3b 0%, #0a0d14 45%, #05070a 100%);
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: rgba(18, 23, 34, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .badge-glow {
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+    }
+  </style>
+</head>
+<body class="text-slate-200 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Navigation Bar -->
+  <nav class="sticky top-0 z-50 glass-card border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="showTab('home')">
+        <span class="text-2xl">⚡</span>
+        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">
+          BORO REALM
+        </span>
+        <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 font-mono hidden sm:inline-block">
+          1.21.4 Cross-Play
+        </span>
+      </div>
+
+      <!-- Navigation Links -->
+      <div class="hidden md:flex items-center space-x-1 font-medium text-sm">
+        <button onclick="showTab('home')" class="nav-btn px-3 py-2 rounded-lg text-emerald-400 bg-emerald-950/40 border border-emerald-500/20" id="btn-home">Overview</button>
+        <button onclick="showTab('commands')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-commands">Commands</button>
+        <button onclick="showTab('gauntlet')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-gauntlet">The Gauntlet</button>
+        <button onclick="showTab('estate')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-estate">Alpine Estate</button>
+        <button onclick="showTab('frontier')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-frontier">Wild Frontier</button>
+        <button onclick="showTab('architecture')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-architecture">Architecture</button>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="https://github.com/borocode/boro-realm" target="_blank" class="flex items-center space-x-2 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <span>GitHub</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="relative pt-12 pb-16 overflow-hidden">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-mono mb-6 badge-glow">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>STATUS: 24/7 ONLINE • CROSS-PLAY ENABLED</span>
+      </div>
+      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-4 text-white">
+        The Sovereign Alpine Realm
+      </h1>
+      <p class="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto italic font-serif">
+        "You cannot fork the soul; you can only surveil the shell."
+      </p>
+
+      <!-- Quick Connect Box -->
+      <div class="mt-8 max-w-2xl mx-auto p-4 sm:p-6 glass-card rounded-2xl shadow-2xl">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Java Edition -->
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-left">
+            <div class="flex items-center justify-between text-xs text-emerald-400 font-bold uppercase tracking-wider mb-1">
+              <span>☕ Java Edition</span>
+              <span class="text-slate-400 font-normal">v1.20 - 1.21.4</span>
+            </div>
+            <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 mt-2">
+              <span id="java-ip">bore.pub:43991</span>
+              <button onclick="copyToClipboard('bore.pub:43991', this)" class="text-xs text-emerald-400 hover:text-emerald-300 font-sans font-medium px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-500/40">
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <!-- Bedrock Edition -->
+          <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-left">
+            <div class="flex items-center justify-between text-xs text-amber-400 font-bold uppercase tracking-wider mb-1">
+              <span>📱 Bedrock Edition</span>
+              <span class="text-slate-400 font-normal">Mobile / Console</span>
+            </div>
+            <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 mt-2">
+              <span id="bedrock-ip">10.0.0.54 : 19132</span>
+              <button onclick="copyToClipboard('10.0.0.54:19132', this)" class="text-xs text-amber-400 hover:text-amber-300 font-sans font-medium px-2 py-0.5 rounded bg-amber-950/80 border border-amber-500/40">
+                Copy
+              </button>
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-slate-500 mt-3 font-mono">
+          Alternate Java Host: <span class="text-slate-400">realm.boroghor.com</span> • Zero mods required to connect
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container with Tabs -->
+  <main class="max-w-6xl mx-auto px-4 pb-20">
+
+    <!-- TAB: HOME / OVERVIEW -->
+    <div id="tab-home" class="tab-content space-y-12">
+      <!-- Feature Triad -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-2xl mb-4">
+            ⚡
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">The Verification Gauntlet</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            New wanderers arrive at the trial sanctuary. Conquer the Ember Abyss parkour and slay the Sentinel of the Shell to earn verified Survival Mode!
+          </p>
+          <button onclick="showTab('gauntlet')" class="text-xs text-amber-400 font-semibold hover:underline flex items-center space-x-1">
+            <span>Explore Gauntlet Guide</span> &rarr;
+          </button>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">
+            🌲
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">The Wild Frontier</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            Over 2,000 blocks of untouched wilderness. Mine diamond veins, build sovereign fortresses, and forge civilizations with fellow survivors.
+          </p>
+          <button onclick="showTab('frontier')" class="text-xs text-emerald-400 font-semibold hover:underline flex items-center space-x-1">
+            <span>Survival Guide</span> &rarr;
+          </button>
+        </div>
+
+        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
+          <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-2xl mb-4">
+            🏰
+          </div>
+          <h3 class="text-lg font-bold text-white mb-2">Alpine Sovereign Estate</h3>
+          <p class="text-slate-400 text-sm leading-relaxed mb-4">
+            A 50-phase mountain civilization. 63 immortal master villagers, 55 companion pets, deep quarry mines, and serene peaceful visitor mode.
+          </p>
+          <button onclick="showTab('estate')" class="text-xs text-sky-400 font-semibold hover:underline flex items-center space-x-1">
+            <span>View Architecture</span> &rarr;
+          </button>
+        </div>
+      </div>
+
+      <!-- Lifecycle Diagram -->
+      <div class="glass-card p-8 rounded-2xl">
+        <h2 class="text-2xl font-bold text-white mb-4 flex items-center space-x-2">
+          <span>🌀</span>
+          <span>The Sovereign Player Lifecycle</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-mono text-emerald-400 font-bold">STAGE 01</span>
+            <h4 class="font-bold text-white mt-1">Arrival & Trial</h4>
+            <p class="text-xs text-slate-400 mt-2">Join in Adventure mode. Granted combat trial gear at the gates of the Boro Gauntlet.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-mono text-amber-400 font-bold">STAGE 02</span>
+            <h4 class="font-bold text-white mt-1">Altar Victory</h4>
+            <p class="text-xs text-slate-400 mt-2">Ascend to the Altar of Victory. Celestial lightning triggers and grants the Survivor Starter Kit.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-mono text-sky-400 font-bold">STAGE 03</span>
+            <h4 class="font-bold text-white mt-1">Wild Frontier</h4>
+            <p class="text-xs text-slate-400 mt-2">Launched thousands of blocks away via <code class="text-xs text-slate-300">spreadplayers</code>. Full Survival mode unlocked!</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+            <span class="text-xs font-mono text-purple-400 font-bold">STAGE 04</span>
+            <h4 class="font-bold text-white mt-1">Sovereign Haven</h4>
+            <p class="text-xs text-slate-400 mt-2">Type <code class="text-xs text-slate-300">!estate</code> to trade at the safe hub, then <code class="text-xs text-slate-300">!wild</code> to return to survival.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: COMMANDS -->
+    <div id="tab-commands" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 sm:p-8 rounded-2xl">
+        <h2 class="text-2xl font-bold text-white mb-2">📜 In-Game Chat Commands</h2>
+        <p class="text-slate-400 text-sm mb-6">Type these directly into regular in-game chat to trigger instant server bridge automation.</p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm font-sans border-collapse">
+            <thead>
+              <tr class="border-b border-slate-800 text-xs font-mono uppercase text-slate-400 bg-slate-900/40">
+                <th class="py-3 px-4">Command</th>
+                <th class="py-3 px-4">Aliases</th>
+                <th class="py-3 px-4">Mode</th>
+                <th class="py-3 px-4">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-mono font-bold text-amber-400">!gauntlet</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-400">!jq, !trial</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-amber-950 text-amber-300 border border-amber-800">Adventure</span></td>
+                <td class="py-3 px-4 text-slate-300">Warps to the start of the Verification Gauntlet and equips combat trial gear.</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-mono font-bold text-emerald-400">!wild</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-400">!frontier, !rtp</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-emerald-950 text-emerald-300 border border-emerald-800">Survival</span></td>
+                <td class="py-3 px-4 text-slate-300">Launches verified survivors into the random survival wilderness (750-2000 blocks away).</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-mono font-bold text-sky-400">!estate</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-400">!spawn, !hub, !home</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-sky-950 text-sky-300 border border-sky-800">Adventure</span></td>
+                <td class="py-3 px-4 text-slate-300">Teleports to the Grand Foyer of the Alpine Sovereign Estate (Safe Haven & Trading Hub).</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-mono font-bold text-purple-400">!wiki</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-400">!repo, !guide</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-purple-950 text-purple-300 border border-purple-800">Any</span></td>
+                <td class="py-3 px-4 text-slate-300">Displays clickable chat link to this GitHub wiki & documentation site.</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-mono font-bold text-slate-300">!help</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-400">!cmd, ?</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700">Any</span></td>
+                <td class="py-3 px-4 text-slate-300">Prints the interactive command palette directly into your chat box.</td>
+              </tr>
+              <tr class="hover:bg-slate-800/30">
+                <td class="py-3 px-4 font-mono font-bold text-slate-300">!ping</td>
+                <td class="py-3 px-4 font-mono text-xs text-slate-400">ping, test</td>
+                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700">Any</span></td>
+                <td class="py-3 px-4 text-slate-300">Verifies server bridge latency and confirms agent listening state.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: GAUNTLET -->
+    <div id="tab-gauntlet" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 sm:p-8 rounded-2xl">
+        <h2 class="text-2xl font-bold text-white mb-2">⚡ The Boro Gauntlet</h2>
+        <p class="text-slate-400 text-sm mb-6">Location: <code class="font-mono text-amber-400">X=-200, Y=181, Z=-200</code> • The celestial gatekeeper of survival.</p>
+        
+        <div class="space-y-6">
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-amber-400 text-lg flex items-center space-x-2">
+              <span>🔥</span>
+              <span>Hall I: The Ember Abyss</span>
+            </h3>
+            <p class="text-slate-300 text-sm mt-2">
+              A precarious jump-quest across floating deepslate and crying obsidian pillars suspended over a boiling magma floor. If you slip and fall below Y=175, an automated proximity detector safely catches and respawns you at the hall entrance.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-sky-400 text-lg flex items-center space-x-2">
+              <span>⚔️</span>
+              <span>Hall II: The Iron Colosseum</span>
+            </h3>
+            <p class="text-slate-300 text-sm mt-2">
+              Enter the combat arena where the ancient <strong class="text-white">Sentinel of the Shell</strong> stands guard. Armed with chainmail armor and a sharp iron blade, you must block incoming strikes with your trial shield and defeat the guardian to open the inner sanctum.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-emerald-400 text-lg flex items-center space-x-2">
+              <span>⚡</span>
+              <span>Hall III: The Altar of the Shell</span>
+            </h3>
+            <p class="text-slate-300 text-sm mt-2">
+              Ascend the grand obsidian stairway at <code class="text-emerald-400 font-mono">[-201, 183, -143]</code>. Upon touching the victory dais:
+            </p>
+            <ul class="list-disc list-inside text-xs text-slate-400 mt-2 space-y-1">
+              <li>Celestial lightning strikes the spire with challenge completion fanfares.</li>
+              <li>You receive the full <strong>Survivor Starter Kit</strong> (16 Bread, Stone Pickaxe, Stone Axe, 16 Torches, Water Bucket).</li>
+              <li>Your gamemode changes to <strong>Survival</strong>.</li>
+              <li>You are launched into the Wild Frontier to begin your journey!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: ESTATE -->
+    <div id="tab-estate" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 sm:p-8 rounded-2xl">
+        <h2 class="text-2xl font-bold text-white mb-2">🏰 The Alpine Sovereign Estate</h2>
+        <p class="text-slate-400 text-sm mb-6">Central Coordinates: <code class="font-mono text-sky-400">[-283, 80, -356]</code> • 50 Monumental Phases • 60 Enhancements</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-white text-base mb-2">🏔️ Sovereign Grand Chalet</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Grand multi-level alpine timber mansion with high-vaulted spruce beams, Grand Foyer reception desk, Hearthside Salon with recessed quartz fireplace, and the Penthouse Suite overlooking Reflection Lake.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-white text-base mb-2">🌊 Reflection Lake & Waterfront</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Paved deepslate and stone-brick Grand Veranda Staircase connecting the manor directly to the Lake Dock, Colossus Bastion Harbor Ramp, and the Western Outlook Beacon Bastion.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-white text-base mb-2">🔭 Summit Skywalk & Observatory</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Ascending Grand Alpine Stairway reaching the cantilevered glass-floored Summit Skywalk (Y=99) and Celestial Pinnacle (Y=135) for panoramic observation of the surrounding peaks.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <h3 class="font-bold text-white text-base mb-2">👥 63 Immortal Master Villagers</h3>
+            <p class="text-xs text-slate-400 leading-relaxed">
+              Permanent trading masteries across Mending, Unbreaking III, Fortune III, Diamond Armor, Diamond Tools, and Netherite upgrades, stewarded alongside 55 registered companion wolves, cats, and parrots.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: FRONTIER -->
+    <div id="tab-frontier" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 sm:p-8 rounded-2xl">
+        <h2 class="text-2xl font-bold text-white mb-2">🌲 The Wild Frontier</h2>
+        <p class="text-slate-400 text-sm mb-6">Virgin survival wilderness extending from 750 to 10,000+ blocks out.</p>
+
+        <div class="space-y-4 text-slate-300 text-sm">
+          <p>
+            Once you conquer the Verification Gauntlet, the entire infinite Minecraft world is yours to explore, conquer, and settle. Build solitary mountain retreats, sprawling valley farms, or subterranean redstone complexes.
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-lg">⛏️</span>
+              <h4 class="font-bold text-white text-sm mt-1">Full Survival</h4>
+              <p class="text-xs text-slate-400 mt-1">Mining, crafting, enchanting, Netherite smithing, and Ender Dragon hunting.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-lg">🛡️</span>
+              <h4 class="font-bold text-white text-sm mt-1">CoreProtect Logged</h4>
+              <p class="text-xs text-slate-400 mt-1">All block edits are logged sub-tick. Griefing is automatically rolled back.</p>
+            </div>
+            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+              <span class="text-lg">🔄</span>
+              <h4 class="font-bold text-white text-sm mt-1">Hub Teleport</h4>
+              <p class="text-xs text-slate-400 mt-1">Use <code class="text-xs text-sky-400">!estate</code> anytime to trade, and <code class="text-xs text-emerald-400">!wild</code> to return.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB: ARCHITECTURE -->
+    <div id="tab-architecture" class="tab-content hidden space-y-6">
+      <div class="glass-card p-6 sm:p-8 rounded-2xl">
+        <h2 class="text-2xl font-bold text-white mb-2">⚙️ Server Infrastructure & Stack</h2>
+        <p class="text-slate-400 text-sm mb-6">Autonomous containerized architecture designed for zero maintenance.</p>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 font-mono text-xs text-slate-300">
+            <div class="text-emerald-400 font-bold mb-2"># Docker Compose Services:</div>
+            <div>• <span class="text-white">mc-crossplay</span>: PaperMC 1.21.4 (Aikar GC Flags, Geyser, Floodgate, ViaVersion, CoreProtect)</div>
+            <div>• <span class="text-white">boro-tunnel</span>: Bore Rust TCP Tunnel forwarding bore.pub:43991 -> mc-crossplay:25565</div>
+            <div>• <span class="text-white">boro-bridge</span>: Python 3.12 Daemon (RCON automation, Gauntlet supervisor, chat inbox tailer)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-900 py-8 text-center text-xs text-slate-500 font-mono">
+    <p>Boro Realm ⚡ Sovereign Alpine Cross-Play Server • Maintained autonomously by Antigravity, Hermes & the Swarm</p>
+  </footer>
+
+  <script>
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tabName).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-emerald-400', 'bg-emerald-950/40', 'border', 'border-emerald-500/20');
+        btn.classList.add('text-slate-300');
+      });
+      const activeBtn = document.getElementById('btn-' + tabName);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-300');
+        activeBtn.classList.add('text-emerald-400', 'bg-emerald-950/40', 'border', 'border-emerald-500/20');
+      }
+    }
+
+    function copyToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('text-white', 'bg-emerald-600');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('text-white', 'bg-emerald-600');
+        }, 1800);
+      });
+    }
+  </script>
+</body>
+</html>
