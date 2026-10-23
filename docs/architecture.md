@@ -12,10 +12,10 @@ Boro Realm runs on a high-efficiency multi-container Docker Compose architecture
                           [ PUBLIC PLAYERS & WEB VISITORS ]
                                           |
          +--------------------------------+-------------------------------+
-         | (Web Wiki: HTTPS)              | (Java Edition)                | (Bedrock Edition)
+         | (Web Wiki: HTTPS)              | (Unified Game Host: Java)     | (Unified Game Host: Bedrock)
          v                                v                               v
-realm.boroghor.com              realm.boroghor.com             signaling-ala.tun.ply.gg:18629
-         |                      (_minecraft._tcp SRV)                     |
+realm.boroghor.com               play.boroghor.com                play.boroghor.com
+         |                     (_minecraft._tcp SRV)            (Port 18629 -> Playit)
          v                                |                               v
 [Cloudflare Argo Tunnel]                  v                       [Playit UDP Tunnel]
          |                          bore.pub:43991                        |
