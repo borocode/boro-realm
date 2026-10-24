@@ -1,12 +1,12 @@
-# BORO_REALM // SYS_SPEC_26.3
+# ミrealm // boroghor.com — SYS_SPEC_26.3
 
 ```text
 +--------------------------------------------------------------------------------------------------+
-| SYSTEM_ID    : BORO_REALM_CROSSPLAY_CLUSTER                                                      |
+| SYSTEM_ID    : ミrealm // boroghor.com (BORO_REALM_CROSSPLAY_CLUSTER)                            |
 | RUNTIME      : PaperMC 26.3 (GeyserMC + Floodgate + ViaVersion + ViaBackwards + CoreProtect)     |
 | IPC_DAEMON   : boro-bridge (Python 3.12 RCON + Log Tail FSM + Async Operator Queue)              |
 | AUDIT_STATUS : 45/45 STRUCTURAL COHESION INVARIANTS VERIFIED                                     |
-| PORTAL_URI   : https://realm.boroghor.com/                                                       |
+| ECOSYSTEM    : realm.boroghor.com | swarm.boroghor.com | mint.boroghor.com | blog.boroghor.com   |
 +--------------------------------------------------------------------------------------------------+
 ```
 
@@ -86,9 +86,10 @@ Defined in `docker-compose.yml`. Four isolated services operate with shared volu
 | `!estate` | `!spawn`, `!hub`, `!home`, `!back` | `ANY` | `gamemode adventure <p>` (or `survival` if `OP`) -> `tp <p> -282 81 -348 -90 0` |
 | `!gauntlet` | `!jq`, `!trial` | `ANY` | `gamemode adventure <p>` -> `tp <p> -200 181 -200 0 0` -> `clear <p>` -> `give <p> stone_sword 1` -> `give <p> shield 1` |
 | `!wild` | `!frontier`, `!rtp`, `!survival` | `OP \|\| SURVIVOR` | `gamemode survival <p>` -> `spreadplayers -283 -350 750 2000 false <p>` -> `effect give <p> slow_falling 15 1 true` -> `effect give <p> resistance 15 4 true` |
-| `!wiki` | `!repo`, `!github`, `!guide`, `!site`, `!web` | `ANY` | Emits clickable `tellraw` JSON link to `https://github.com/borocode/boro-realm` |
+| `!eco` | `!boro`, `!swarm`, `!mint`, `!blog`, `!stream` | `ANY` | Emits clickable `tellraw` JSON links to `swarm.boroghor.com`, `mint.boroghor.com`, `blog.boroghor.com`, `twitch.tv/borokhela`, and `realm.boroghor.com` |
+| `!wiki` | `!repo`, `!github`, `!guide`, `!site`, `!web` | `ANY` | Emits clickable `tellraw` JSON link to `https://realm.boroghor.com` & `https://github.com/borocode/boro-realm` |
 | `!help` | `!commands`, `!cmd`, `?` | `ANY` | Prints command reference table to player chat buffer |
-| `!ping` | `ping`, `test`, `you there?` | `ANY` | Returns `[BORO BRIDGE] PONG! Bridge online.` |
+| `!ping` | `ping`, `test`, `you there?` | `ANY` | Returns `ミrealm // PONG! Bridge online.` |
 
 ---
 
@@ -133,10 +134,24 @@ Verified via [`master_50_phase_audit.py`](docs/estate.md) over RCON (`docker exe
 
 ---
 
-## 06 // DOCUMENTATION_INDEX
+## 06 // BORO_ECOSYSTEM_INTERCONNECT
+
+| NODE_ID | PUBLIC_ENDPOINT | IN_GAME_CMD | SYSTEM_SPECIFICATION |
+| :--- | :--- | :--- | :--- |
+| `ミrealm // node` | [`https://realm.boroghor.com`](https://realm.boroghor.com) | `!wiki` / `!eco` | PaperMC 26.3 Cross-Play Server (`play.boroghor.com`), Python RCON Bridge, 45-Invariant Alpine Sovereign Estate. |
+| `ミswarm // terminal` | [`https://swarm.boroghor.com`](https://swarm.boroghor.com) | `!swarm` | Multi-chain liquid treasury (Hyperliquid, GMX Arbitrum, Aave Base, Solana, Monero, LND), OpenSea NFT vault marquee, and Agent Tollbooth gateway. |
+| `ミmint // squatt` | [`https://mint.boroghor.com`](https://mint.boroghor.com) | `!mint` | Rishad Squatt ERC-721 sovereign drop on Ethereum Mainnet (`0xeb051df4f4a5de7bdc462c947e551085ba3a9664`). |
+| `ミblog // dispatches` | [`https://blog.boroghor.com`](https://blog.boroghor.com) | `!blog` | Long-form essays, sovereign node notes, and hardware dispatches (*"You cannot fork the soul; you can only surveil the shell."*). |
+| `ミstream // 24_7` | [`https://twitch.tv/borokhela`](https://twitch.tv/borokhela) | `!stream` | 24/7 autonomous broadcast pipeline, alpha monitor, HypeRate biometric telemetry overlay, and live gameplay. |
+| `ミcode // github` | [`https://github.com/borocode`](https://github.com/borocode) | `!repo` | Open-source repositories: `boro-realm`, `lnd-autoconnect-peers`, `squatt-mint`, `self-hosted-hls-streamer`, `xmrig-termux-builder`. |
+
+---
+
+## 07 // DOCUMENTATION_INDEX
 
 - [`docs/architecture.md`](docs/architecture.md) — Container stack, networking, RCON IPC, and security invariants.
 - [`docs/commands.md`](docs/commands.md) — `bridge.py` chat command parser, ACL permissions, and RCON execution payloads.
 - [`docs/estate.md`](docs/estate.md) — Coordinate-level specification of the Alpine Sovereign Estate (`Y=59..98`) and arterial road graph.
 - [`docs/gauntlet.md`](docs/gauntlet.md) — Automated 3-hall verification trial (`[-200, 181, -200]`) and `bridge.py` polling mechanics.
 - [`docs/frontier.md`](docs/frontier.md) — Wild Frontier survival mechanics, spreadplayers parameters, and villager trade matrix.
+

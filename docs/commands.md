@@ -52,20 +52,25 @@ CHAT_RE = re.compile(r"\[Async Chat Thread[^\]]*\]/INFO\]: (?:\[Not Secure\] )?<
   ```
 - **Rejection Action (Unauthorized):** Sends red `tellraw` warning prompting the player to complete `!gauntlet` first.
 
-### 1.4 `!wiki`
+### 1.4 `!eco`
+- **Aliases:** `!boro`, `!ecosystem`, `!nodes`, `!links`, `!swarm`, `!mint`, `!squatt`, `!blog`, `!stream`, `!twitch`
+- **Access Control:** `ANY`
+- **RCON Execution:** Emits the `ミboro // ecosystem` node matrix in chat with clickable links to `https://swarm.boroghor.com`, `https://mint.boroghor.com`, `https://blog.boroghor.com`, `https://twitch.tv/borokhela`, `https://realm.boroghor.com`, and `https://github.com/borocode`.
+
+### 1.5 `!wiki`
 - **Aliases:** `!repo`, `!github`, `!guide`, `!site`, `!web`
 - **Access Control:** `ANY`
-- **RCON Execution:** Emits a clickable `open_url` JSON `tellraw` linking to `https://github.com/borocode/boro-realm`.
+- **RCON Execution:** Emits clickable `open_url` JSON `tellraw` links to `https://realm.boroghor.com` and `https://github.com/borocode/boro-realm`.
 
-### 1.5 `!help`
+### 1.6 `!help`
 - **Aliases:** `!commands`, `!cmd`, `?`
 - **Access Control:** `ANY`
 - **RCON Execution:** Sends formatted command listing to the invoking player via `tellraw`.
 
-### 1.6 `!ping`
+### 1.7 `!ping`
 - **Aliases:** `ping`, `test`, `you there?`
 - **Access Control:** `ANY`
-- **RCON Execution:** Sends `[BORO BRIDGE] PONG! Bridge online.` via `tellraw`.
+- **RCON Execution:** Sends `ミrealm // PONG! Bridge online.` via `tellraw`.
 
 ---
 
