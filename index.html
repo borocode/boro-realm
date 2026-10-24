@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚡ BORO REALM — Sovereign Alpine Cross-Play Minecraft</title>
-  <meta name="description" content="Official Wiki and Frontpage for Boro Realm. High-altitude Alpine Sovereign Estate, Verification Gauntlet, and Untamed Wild Frontier Survival.">
+  <title>BORO REALM // SYS_SPEC_v26.4</title>
+  <meta name="description" content="Technical Specification & Network Gateway for Boro Realm (play.boroghor.com) — Cross-Play Minecraft Server, Infrastructure, State Machine, and Master Audit Telemetry.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -15,18 +15,21 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace'],
+            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
           },
           colors: {
-            brand: {
-              green: '#10b981',
-              emerald: '#059669',
-              gold: '#f59e0b',
-              dark: '#0a0d14',
-              card: '#121722',
-              cardBorder: '#1e293b',
-              accent: '#38bdf8'
+            sys: {
+              bg: '#05070a',
+              panel: '#090d14',
+              sub: '#0f1724',
+              border: '#1a2436',
+              borderBright: '#2a3b57',
+              cyan: '#00f3ff',
+              green: '#00ff66',
+              amber: '#ffb700',
+              red: '#ff0055',
+              text: '#d1d9e6',
+              dim: '#6b7d99'
             }
           }
         }
@@ -35,311 +38,337 @@
   </script>
   <style>
     body {
-      background: radial-gradient(circle at 50% -20%, #064e3b 0%, #0a0d14 45%, #05070a 100%);
-      min-height: 100vh;
+      background-color: #05070a;
+      background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      color: #d1d9e6;
     }
-    .glass-card {
-      background: rgba(18, 23, 34, 0.75);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+    .crt-scanline {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      z-index: 999;
+      pointer-events: none;
+      opacity: 0.35;
     }
-    .glass-card:hover {
-      border-color: rgba(16, 185, 129, 0.3);
+    .telemetry-grid {
+      border: 1px solid #1a2436;
+      background-color: rgba(9, 13, 20, 0.85);
+      backdrop-filter: blur(8px);
     }
-    .badge-glow {
-      box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+    .telemetry-grid:hover {
+      border-color: #2a3b57;
+    }
+    .glow-cyan {
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.15);
+    }
+    .glow-green {
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.15);
     }
   </style>
 </head>
-<body class="text-slate-200 antialiased selection:bg-emerald-500 selection:text-white">
+<body class="font-mono text-xs sm:text-sm antialiased selection:bg-cyan-500 selection:text-black">
+  <div class="crt-scanline"></div>
 
-  <!-- Top Navigation Bar -->
-  <nav class="sticky top-0 z-50 glass-card border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="showTab('home')">
-        <span class="text-2xl">⚡</span>
-        <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-emerald-400 via-teal-300 to-amber-400 bg-clip-text text-transparent">
-          BORO REALM
-        </span>
-        <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-400 border border-emerald-500/30 font-mono hidden sm:inline-block">
-          1.21.4 Cross-Play
-        </span>
-      </div>
-
-      <!-- Navigation Links -->
-      <div class="hidden md:flex items-center space-x-1 font-medium text-sm">
-        <button onclick="showTab('home')" class="nav-btn px-3 py-2 rounded-lg text-emerald-400 bg-emerald-950/40 border border-emerald-500/20" id="btn-home">Overview</button>
-        <button onclick="showTab('commands')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-commands">Commands</button>
-        <button onclick="showTab('gauntlet')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-gauntlet">The Gauntlet</button>
-        <button onclick="showTab('estate')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-estate">Alpine Estate</button>
-        <button onclick="showTab('frontier')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-frontier">Wild Frontier</button>
-        <button onclick="showTab('architecture')" class="nav-btn px-3 py-2 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/50" id="btn-architecture">Architecture</button>
-      </div>
-
+  <!-- Terminal Header / Telemetry Bar -->
+  <header class="border-b border-sys-border bg-sys-panel/90 sticky top-0 z-50 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
       <div class="flex items-center space-x-3">
-        <a href="https://github.com/borocode/boro-realm" target="_blank" class="flex items-center space-x-2 text-xs font-semibold px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition">
-          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          <span>GitHub</span>
+        <span class="text-sys-cyan font-bold tracking-widest text-base">BORO::REALM</span>
+        <span class="text-sys-dim text-xs hidden sm:inline">[NET_NODE_247]</span>
+        <span class="px-1.5 py-0.5 text-[10px] bg-sys-green/10 text-sys-green border border-sys-green/30 rounded font-semibold uppercase">
+          ONLINE 24/7
+        </span>
+      </div>
+
+      <div class="flex items-center space-x-2 text-xs">
+        <span class="text-sys-dim">CORE:</span>
+        <span class="text-sys-cyan">1.21.4_CROSSPLAY</span>
+        <span class="text-sys-border">|</span>
+        <a href="https://github.com/borocode/boro-realm" target="_blank" class="text-sys-dim hover:text-sys-cyan border border-sys-border px-2 py-1 rounded bg-sys-sub hover:border-sys-cyan transition">
+          SRC_REPO &nearr;
         </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero Section -->
-  <header class="relative pt-12 pb-16 overflow-hidden">
-    <div class="max-w-5xl mx-auto px-4 text-center">
-      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-xs font-mono mb-6 badge-glow">
-        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span>STATUS: 24/7 ONLINE • CROSS-PLAY ENABLED</span>
-      </div>
-      <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight mb-4 text-white">
-        The Sovereign Alpine Realm
-      </h1>
-      <p class="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto italic font-serif">
-        "You cannot fork the soul; you can only surveil the shell."
-      </p>
-
-      <!-- Quick Connect Box: Unified Server Host play.boroghor.com -->
-      <div class="mt-8 max-w-3xl mx-auto p-4 sm:p-6 glass-card rounded-2xl shadow-2xl">
-        <!-- Unified Host Banner -->
-        <div class="mb-5 pb-4 border-b border-slate-800/80 text-center">
-          <div class="inline-flex items-center space-x-2 text-xs font-mono uppercase tracking-wider text-emerald-400 font-bold bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-500/20 mb-2">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Official Game Server Host</span>
-          </div>
-          <div class="flex items-center justify-center space-x-3 bg-slate-950/80 max-w-md mx-auto p-3 rounded-xl border border-slate-800">
-            <span class="font-mono text-lg sm:text-xl font-bold text-white tracking-wide">play.boroghor.com</span>
-            <button onclick="copyToClipboard('play.boroghor.com', this)" class="text-xs text-emerald-400 hover:text-emerald-300 font-sans font-semibold px-3 py-1.5 rounded bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-500/40 transition">
-              Copy Host
-            </button>
-          </div>
-          <p class="text-[11px] text-slate-400 mt-2 font-mono">
-            Connect from both Java & Bedrock Edition using <span class="text-emerald-300">play.boroghor.com</span>
-          </p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Java Edition -->
-          <div class="bg-slate-900/90 p-4 rounded-xl border border-emerald-900/40 text-left flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between text-xs text-emerald-400 font-bold uppercase tracking-wider mb-2">
-                <span class="flex items-center space-x-1.5">
-                  <span>☕</span>
-                  <span>Java Edition</span>
-                </span>
-                <span class="text-xs font-mono text-emerald-500/80 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/20">1.20 - 1.21.4</span>
-              </div>
-              
-              <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Server Address</label>
-              <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-                <span id="java-ip" class="text-emerald-300 font-semibold selection:bg-emerald-800">play.boroghor.com</span>
-                <button onclick="copyToClipboard('play.boroghor.com', this)" class="text-xs text-emerald-400 hover:text-emerald-300 font-sans font-medium px-2.5 py-1 rounded bg-emerald-950/90 hover:bg-emerald-900/90 border border-emerald-500/40 transition">
-                  Copy
-                </button>
-              </div>
-              <p class="text-[11px] text-slate-400 mt-2 font-sans flex items-center space-x-1">
-                <span>⚡</span>
-                <span>Default port <code class="text-slate-300 font-mono">25565</code> (Auto-routed via SRV)</span>
-              </p>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-              <span>Direct fallback:</span>
-              <button onclick="copyToClipboard('bore.pub:43991', this)" class="hover:text-emerald-400 text-slate-400 underline decoration-slate-600 underline-offset-2">
-                bore.pub:43991
-              </button>
-            </div>
-          </div>
-
-          <!-- Bedrock Edition -->
-          <div class="bg-slate-900/90 p-4 rounded-xl border border-amber-900/40 text-left flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between text-xs text-amber-400 font-bold uppercase tracking-wider mb-2">
-                <span class="flex items-center space-x-1.5">
-                  <span>📱</span>
-                  <span>Bedrock Edition</span>
-                </span>
-                <span class="text-xs font-mono text-amber-500/80 bg-amber-950/60 px-2 py-0.5 rounded border border-amber-500/20">Mobile • Win • Console</span>
-              </div>
-
-              <!-- Bedrock Server Address -->
-              <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Server Address</label>
-              <div class="font-mono text-xs sm:text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-                <span id="bedrock-host" class="text-amber-300 font-semibold truncate mr-2">play.boroghor.com</span>
-                <button onclick="copyToClipboard('play.boroghor.com', this)" class="text-xs text-amber-400 hover:text-amber-300 font-sans font-medium px-2.5 py-1 rounded bg-amber-950/90 hover:bg-amber-900/90 border border-amber-500/40 transition shrink-0">
-                  Copy
-                </button>
-              </div>
-
-              <!-- Bedrock Port -->
-              <div class="mt-2.5">
-                <label class="block text-[11px] font-mono uppercase text-slate-400 mb-1">Port</label>
-                <div class="font-mono text-sm text-slate-100 flex items-center justify-between bg-slate-950 px-3 py-2 rounded-lg border border-slate-800">
-                  <span id="bedrock-port" class="text-amber-300 font-semibold">18629</span>
-                  <button onclick="copyToClipboard('18629', this)" class="text-xs text-amber-400 hover:text-amber-300 font-sans font-medium px-2.5 py-1 rounded bg-amber-950/90 hover:bg-amber-900/90 border border-amber-500/40 transition">
-                    Copy
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
-              <span>Direct tunnel:</span>
-              <button onclick="copyToClipboard('signaling-ala.tun.ply.gg:18629', this)" class="hover:text-amber-400 text-slate-400 underline decoration-slate-600 underline-offset-2">
-                signaling-ala.tun.ply.gg
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-3 border-t border-slate-800/60 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-slate-400 font-mono">
-          <span class="flex items-center space-x-1">
-            <span class="text-emerald-400">●</span>
-            <span>Online 24/7 Cross-Play</span>
-          </span>
-          <span class="flex items-center space-x-1">
-            <span>🛡️</span>
-            <span>Grief-Proof Verification Gauntlet</span>
-          </span>
-          <span class="flex items-center space-x-1">
-            <span>⚡</span>
-            <span>Zero Mods or Client Downloads Required</span>
-          </span>
-        </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Container with Tabs -->
-  <main class="max-w-6xl mx-auto px-4 pb-20">
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
-    <!-- TAB: HOME / OVERVIEW -->
-    <div id="tab-home" class="tab-content space-y-12">
-      <!-- Feature Triad -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-          <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-2xl mb-4">
-            ⚡
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2">The Verification Gauntlet</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            New wanderers arrive at the trial sanctuary. Conquer the Ember Abyss parkour and slay the Sentinel of the Shell to earn verified Survival Mode!
-          </p>
-          <button onclick="showTab('gauntlet')" class="text-xs text-amber-400 font-semibold hover:underline flex items-center space-x-1">
-            <span>Explore Gauntlet Guide</span> &rarr;
-          </button>
+    <!-- Top Sys Info / Machine Banner -->
+    <div class="telemetry-grid p-4 sm:p-6 rounded-lg glow-cyan">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-sys-border pb-4 mb-4">
+        <div>
+          <div class="text-[10px] text-sys-dim uppercase tracking-wider">SYSTEM_SPECIFICATION &amp; TELEMETRY</div>
+          <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight mt-0.5">
+            play.boroghor.com // CLUSTER_GATEWAY
+          </h1>
         </div>
-
-        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-          <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-2xl mb-4">
-            🌲
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2">The Wild Frontier</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            Over 2,000 blocks of untouched wilderness. Mine diamond veins, build sovereign fortresses, and forge civilizations with fellow survivors.
-          </p>
-          <button onclick="showTab('frontier')" class="text-xs text-emerald-400 font-semibold hover:underline flex items-center space-x-1">
-            <span>Survival Guide</span> &rarr;
-          </button>
-        </div>
-
-        <div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-          <div class="w-12 h-12 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-2xl mb-4">
-            🏰
-          </div>
-          <h3 class="text-lg font-bold text-white mb-2">Alpine Sovereign Estate</h3>
-          <p class="text-slate-400 text-sm leading-relaxed mb-4">
-            A 50-phase mountain civilization. 63 immortal master villagers, 55 companion pets, deep quarry mines, and serene peaceful visitor mode.
-          </p>
-          <button onclick="showTab('estate')" class="text-xs text-sky-400 font-semibold hover:underline flex items-center space-x-1">
-            <span>View Architecture</span> &rarr;
-          </button>
+        <div class="flex items-center space-x-4 text-xs">
+          <div><span class="text-sys-dim">AUDIT_PASS:</span> <span class="text-sys-green font-bold">45/45 (100%)</span></div>
+          <div><span class="text-sys-dim">FIRE_TICK:</span> <span class="text-sys-cyan font-bold">RADIUS_0 (IMMUTABLE)</span></div>
+          <div><span class="text-sys-dim">SECURITY:</span> <span class="text-sys-green font-bold">AIRGAPPED_RESIDENTIAL_IP</span></div>
         </div>
       </div>
 
-      <!-- Lifecycle Diagram -->
-      <div class="glass-card p-8 rounded-2xl">
-        <h2 class="text-2xl font-bold text-white mb-4 flex items-center space-x-2">
-          <span>🌀</span>
-          <span>The Sovereign Player Lifecycle</span>
-        </h2>
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span class="text-xs font-mono text-emerald-400 font-bold">STAGE 01</span>
-            <h4 class="font-bold text-white mt-1">Arrival & Trial</h4>
-            <p class="text-xs text-slate-400 mt-2">Join in Adventure mode. Granted combat trial gear at the gates of the Boro Gauntlet.</p>
+      <!-- Quick Connect Dual-Stack Terminal Table -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        
+        <!-- Java Protocol Block -->
+        <div class="bg-sys-sub p-4 rounded border border-sys-border">
+          <div class="flex items-center justify-between text-xs text-sys-cyan mb-2 font-bold uppercase tracking-wider">
+            <span>&gt; JAVA_EDITION_ENDPOINT</span>
+            <span class="text-sys-dim text-[10px]">TCP // SRV_AUTO</span>
           </div>
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span class="text-xs font-mono text-amber-400 font-bold">STAGE 02</span>
-            <h4 class="font-bold text-white mt-1">Altar Victory</h4>
-            <p class="text-xs text-slate-400 mt-2">Ascend to the Altar of Victory. Celestial lightning triggers and grants the Survivor Starter Kit.</p>
+          <div class="bg-black/60 p-2.5 rounded border border-sys-border flex items-center justify-between">
+            <div>
+              <div class="text-[10px] text-sys-dim">HOST_ADDR</div>
+              <div class="text-white font-bold text-sm tracking-wide">play.boroghor.com</div>
+            </div>
+            <button onclick="copy('play.boroghor.com', this)" class="px-3 py-1 bg-sys-cyan/10 hover:bg-sys-cyan/20 border border-sys-cyan/40 text-sys-cyan rounded text-xs transition">
+              COPY
+            </button>
           </div>
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span class="text-xs font-mono text-sky-400 font-bold">STAGE 03</span>
-            <h4 class="font-bold text-white mt-1">Wild Frontier</h4>
-            <p class="text-xs text-slate-400 mt-2">Launched thousands of blocks away via <code class="text-xs text-slate-300">spreadplayers</code>. Full Survival mode unlocked!</p>
+          <div class="mt-3 flex items-center justify-between text-[11px] text-sys-dim">
+            <span>PORT: <span class="text-white">25565</span> (Default / SRV routed)</span>
+            <span>FALLBACK: <button onclick="copy('bore.pub:43991', this)" class="text-sys-cyan hover:underline">bore.pub:43991</button></span>
           </div>
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-            <span class="text-xs font-mono text-purple-400 font-bold">STAGE 04</span>
-            <h4 class="font-bold text-white mt-1">Sovereign Haven</h4>
-            <p class="text-xs text-slate-400 mt-2">Type <code class="text-xs text-slate-300">!estate</code> to trade at the safe hub, then <code class="text-xs text-slate-300">!wild</code> to return to survival.</p>
+        </div>
+
+        <!-- Bedrock Protocol Block -->
+        <div class="bg-sys-sub p-4 rounded border border-sys-border">
+          <div class="flex items-center justify-between text-xs text-sys-amber mb-2 font-bold uppercase tracking-wider">
+            <span>&gt; BEDROCK_EDITION_ENDPOINT</span>
+            <span class="text-sys-dim text-[10px]">UDP // GEYSER_FLOODGATE</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="bg-black/60 p-2.5 rounded border border-sys-border flex items-center justify-between">
+              <div>
+                <div class="text-[10px] text-sys-dim">SERVER_ADDRESS</div>
+                <div class="text-white font-bold text-xs truncate">play.boroghor.com</div>
+              </div>
+              <button onclick="copy('play.boroghor.com', this)" class="px-2 py-0.5 bg-sys-amber/10 hover:bg-sys-amber/20 border border-sys-amber/40 text-sys-amber rounded text-xs transition">
+                COPY
+              </button>
+            </div>
+            <div class="bg-black/60 p-2.5 rounded border border-sys-border flex items-center justify-between">
+              <div>
+                <div class="text-[10px] text-sys-dim">PORT</div>
+                <div class="text-white font-bold text-xs">18629</div>
+              </div>
+              <button onclick="copy('18629', this)" class="px-2 py-0.5 bg-sys-amber/10 hover:bg-sys-amber/20 border border-sys-amber/40 text-sys-amber rounded text-xs transition">
+                COPY
+              </button>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center justify-between text-[11px] text-sys-dim">
+            <span>CLIENTS: iOS, Android, Win10/11, Switch, Xbox, PS</span>
+            <span>TUNNEL: <button onclick="copy('signaling-ala.tun.ply.gg:18629', this)" class="text-sys-amber hover:underline">playit:18629</button></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Navigation Sub-Pills -->
+    <div class="flex flex-wrap gap-2 text-xs">
+      <button onclick="setTab('infra')" id="btn-infra" class="tab-btn px-3 py-1.5 rounded border border-sys-cyan bg-sys-cyan/10 text-sys-cyan font-semibold">
+        [01] INFRASTRUCTURE_SPEC
+      </button>
+      <button onclick="setTab('statemachine')" id="btn-statemachine" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
+        [02] PLAYER_STATE_MACHINE
+      </button>
+      <button onclick="setTab('estate')" id="btn-estate" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
+        [03] ALPINE_ESTATE_COHESION
+      </button>
+      <button onclick="setTab('bridge')" id="btn-bridge" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
+        [04] IN_GAME_BRIDGE_API
+      </button>
+      <button onclick="setTab('audit')" id="btn-audit" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
+        [05] VERIFIED_INVARIANTS
+      </button>
+    </div>
+
+    <!-- PANEL 1: INFRASTRUCTURE SPEC -->
+    <div id="tab-infra" class="tab-pane space-y-6">
+      <div class="telemetry-grid p-6 rounded-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
+          <span>&gt; DOCKER_COMPOSE_DEPLOYMENT_TOPOLOGY</span>
+          <span class="text-sys-dim">HOST: WINDOWS_11_CONTAINER_RUNTIME</span>
+        </div>
+
+        <pre class="bg-black/80 p-4 rounded border border-sys-border text-[11px] sm:text-xs text-sys-text overflow-x-auto leading-relaxed">
+                             [ PUBLIC INGRESS: INTERNET ]
+                                           │
+                   ┌───────────────────────┴───────────────────────┐
+                   ▼                                               ▼
+         [ play.boroghor.com ]                           [ play.boroghor.com ]
+      (TCP Java SRV -> bore.pub:43991)                 (UDP Bedrock -> ply.gg:18629)
+                   │                                               │
+                   ▼                                               ▼
+           [ bore-tunnel ]                                    [ playit ]
+     Rust TCP Reverse Proxy Container                 Direct Tunnel Node Container
+                   │                                               │
+                   └───────────────────────┬───────────────────────┘
+                                           │ (Host bridge network)
+                                           ▼
+                               [ boro-minecraft CONTAINER ]
+                           Engine: PaperMC 1.21.4 (Build #227)
+                           ├─ GeyserMC: Bedrock Protocol Translation
+                           ├─ Floodgate: Auth Decoupling
+                           ├─ ViaVersion / ViaBackwards: Client Compatibility
+                           └─ CoreProtect: Sub-tick SQLite Event Logging
+                                           ▲
+                                           │ (RCON Localhost:25575)
+                                           ▼
+                                 [ boro-bridge CONTAINER ]
+                           Autonomous Python 3.12 Protocol Bridge
+                           ├─ Tail: /data/logs/latest.log
+                           ├─ Proximity Detector: Gauntlet Completion (Hall III)
+                           ├─ Zero-LLM Rule Engine: Chat Commands (!wild, !estate)
+                           └─ Async Queue: /data/logs/operator_inbox.json
+        </pre>
+      </div>
+    </div>
+
+    <!-- PANEL 2: STATE MACHINE -->
+    <div id="tab-statemachine" class="tab-pane hidden space-y-6">
+      <div class="telemetry-grid p-6 rounded-lg space-y-4">
+        <div class="border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
+          &gt; SURVIVAL_VERIFICATION_STATE_MACHINE
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-sys-sub p-4 rounded border border-sys-border">
+            <div class="text-[10px] text-sys-dim">STATE 00 // ADVENTURE</div>
+            <div class="font-bold text-white text-sm mt-1">THE BORO GAUNTLET</div>
+            <div class="text-xs text-sys-dim mt-2">Coords: [-200, 181, -200]</div>
+            <p class="text-xs text-sys-text mt-2 leading-relaxed">
+              New connections spawn in Adventure mode with trial gear. Required to conquer Hall I (Ember Abyss parkour) and Hall II (Sentinel of the Shell) to prevent griefing.
+            </p>
+          </div>
+
+          <div class="bg-sys-sub p-4 rounded border border-sys-cyan/40">
+            <div class="text-[10px] text-sys-cyan">TRANSITION // DAIS TRIGGER</div>
+            <div class="font-bold text-white text-sm mt-1">ALTAR OF THE SHELL</div>
+            <div class="text-xs text-sys-dim mt-2">Coords: [-201, 183, -143]</div>
+            <p class="text-xs text-sys-text mt-2 leading-relaxed">
+              Stepping onto the obsidian altar triggers celestial lightning, server-wide broadcast, Survivor Starter Kit issuance (16 bread, stone tools, water bucket), and state promotion to Survival.
+            </p>
+          </div>
+
+          <div class="bg-sys-sub p-4 rounded border border-sys-green/40">
+            <div class="text-[10px] text-sys-green">STATE 01 // SURVIVAL</div>
+            <div class="font-bold text-white text-sm mt-1">THE WILD FRONTIER</div>
+            <div class="text-xs text-sys-dim mt-2">Spreadplayers: 750..2,000 blocks</div>
+            <p class="text-xs text-sys-text mt-2 leading-relaxed">
+              Unrestricted survival wilderness. Mine, farm, quarry, claim, build. Survivors can execute <code class="text-sys-cyan">!estate</code> to visit the trading hub anytime, and <code class="text-sys-green">!wild</code> to return.
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB: COMMANDS -->
-    <div id="tab-commands" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6 sm:p-8 rounded-2xl">
-        <h2 class="text-2xl font-bold text-white mb-2">📜 In-Game Chat Commands</h2>
-        <p class="text-slate-400 text-sm mb-6">Type these directly into regular in-game chat to trigger instant server bridge automation.</p>
+    <!-- PANEL 3: ESTATE COHESION -->
+    <div id="tab-estate" class="tab-pane hidden space-y-6">
+      <div class="telemetry-grid p-6 rounded-lg space-y-4">
+        <div class="border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
+          &gt; ALPINE_SOVEREIGN_ESTATE // MASTER_ARCHITECTURE
+        </div>
+        
+        <p class="text-xs text-sys-text">
+          Grounded to terrain coordinates <code class="text-sys-cyan">[-296..-221, Y=59..98, -375..-321]</code>. Built under human architectural harmony (walkable stairs with 3-block clear headroom, continuous weatherproof roofs, grounded stone foundations, zero floating clanker boxes):
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="bg-sys-sub p-4 rounded border border-sys-border space-y-2">
+            <div class="font-bold text-white text-sm flex items-center justify-between">
+              <span>ALPINE CHALET COMPLEX</span>
+              <span class="text-sys-green">WEATHERPROOF 100%</span>
+            </div>
+            <ul class="space-y-1.5 text-sys-dim">
+              <li>• <span class="text-white">Pitched A-Frame Roof (Y=88..95):</span> Solid spruce plank backing, gable glass walls, cathedral skylight spine.</li>
+              <li>• <span class="text-white">Active Hearth Chimneys (Y=96):</span> Contained campfire smoke flues above West Hearth &amp; East Kitchen.</li>
+              <li>• <span class="text-white">Central Promenade (Y=80..82):</span> Clear 3-block artery from Grand Foyer to West Inglenook Fireplace.</li>
+              <li>• <span class="text-white">Hearth Kitchen &amp; Larder (Y=80):</span> Polished granite floor, smokers, blast furnace, preparation island.</li>
+              <li>• <span class="text-white">Alexandrian Library (Y=80..86):</span> Two-story scriptorium, study desk, cartography bench, chiseled archives.</li>
+              <li>• <span class="text-white">Penthouse &amp; Starlight Loft (Y=84..95):</span> King canopy bed, enchanting table, mezzanine observatory.</li>
+            </ul>
+          </div>
+
+          <div class="bg-sys-sub p-4 rounded border border-sys-border space-y-2">
+            <div class="font-bold text-white text-sm flex items-center justify-between">
+              <span>SUBTERRANEAN &amp; ARTERIAL ROADS</span>
+              <span class="text-sys-green">WALKABLE 100%</span>
+            </div>
+            <ul class="space-y-1.5 text-sys-dim">
+              <li>• <span class="text-white">Level 1 Wine Cellar (Y=74):</span> Oak aging barrels, sommelier tasting counter, fermentation stand.</li>
+              <li>• <span class="text-white">Level 2 Thermal Spa (Y=68):</span> Geothermal iron-grated steam vent, quartz deck, hot pool, relaxation recliners.</li>
+              <li>• <span class="text-white">Level 3 Pioneers Crypt (Y=59):</span> Ancestral sarcophagus, soul fire, relic pots, continuous deepslate stair.</li>
+              <li>• <span class="text-white">Grand East Avenue (X=-276..-242):</span> Stepped stone road through fortified Mountain Gate battlements.</li>
+              <li>• <span class="text-white">North Marina Promenade (Z=-349..-375):</span> Pier-supported lake bridge, boardwalk, harbor fishing gazebo.</li>
+              <li>• <span class="text-white">South Stables &amp; Railhead (Z=-345..-321):</span> Continuous cobbled road to stables, blacksmith forge, and mine rail.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 4: BRIDGE API -->
+    <div id="tab-bridge" class="tab-pane hidden space-y-6">
+      <div class="telemetry-grid p-6 rounded-lg space-y-4">
+        <div class="border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
+          &gt; IN_GAME_CHAT_BRIDGE_COMMANDS
+        </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm font-sans border-collapse">
+          <table class="w-full text-left text-xs font-mono border-collapse">
             <thead>
-              <tr class="border-b border-slate-800 text-xs font-mono uppercase text-slate-400 bg-slate-900/40">
-                <th class="py-3 px-4">Command</th>
-                <th class="py-3 px-4">Aliases</th>
-                <th class="py-3 px-4">Mode</th>
-                <th class="py-3 px-4">Description</th>
+              <tr class="border-b border-sys-border text-sys-dim bg-black/40">
+                <th class="p-3">COMMAND</th>
+                <th class="p-3">ALIASES</th>
+                <th class="p-3">TARGET_MODE</th>
+                <th class="p-3">EXECUTION_ROUTINE</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-800/60">
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-4 font-mono font-bold text-amber-400">!gauntlet</td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-400">!jq, !trial</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-amber-950 text-amber-300 border border-amber-800">Adventure</span></td>
-                <td class="py-3 px-4 text-slate-300">Warps to the start of the Verification Gauntlet and equips combat trial gear.</td>
+            <tbody class="divide-y divide-sys-border/60">
+              <tr class="hover:bg-sys-sub">
+                <td class="p-3 text-sys-cyan font-bold">!gauntlet</td>
+                <td class="p-3 text-sys-dim">!jq, !trial</td>
+                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-amber/10 text-sys-amber border border-sys-amber/30">Adventure</span></td>
+                <td class="p-3 text-sys-text">Teleport to Gauntlet gates [-200, 181, -200]; equip combat trial gear.</td>
               </tr>
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-4 font-mono font-bold text-emerald-400">!wild</td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-400">!frontier, !rtp</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-emerald-950 text-emerald-300 border border-emerald-800">Survival</span></td>
-                <td class="py-3 px-4 text-slate-300">Launches verified survivors into the random survival wilderness (750-2000 blocks away).</td>
+              <tr class="hover:bg-sys-sub">
+                <td class="p-3 text-sys-green font-bold">!wild</td>
+                <td class="p-3 text-sys-dim">!frontier, !rtp</td>
+                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-green/10 text-sys-green border border-sys-green/30">Survival</span></td>
+                <td class="p-3 text-sys-text">Execute spreadplayers 750..2000 blocks into wilderness; switch mode to Survival.</td>
               </tr>
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-4 font-mono font-bold text-sky-400">!estate</td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-400">!spawn, !hub, !home</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-sky-950 text-sky-300 border border-sky-800">Adventure</span></td>
-                <td class="py-3 px-4 text-slate-300">Teleports to the Grand Foyer of the Alpine Sovereign Estate (Safe Haven & Trading Hub).</td>
+              <tr class="hover:bg-sys-sub">
+                <td class="p-3 text-sys-cyan font-bold">!estate</td>
+                <td class="p-3 text-sys-dim">!spawn, !hub, !home</td>
+                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-cyan/10 text-sys-cyan border border-sys-cyan/30">Adventure</span></td>
+                <td class="p-3 text-sys-text">Teleport to Grand Foyer [-282, 81, -348]; switch to grief-proof Adventure mode.</td>
               </tr>
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-4 font-mono font-bold text-purple-400">!wiki</td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-400">!repo, !guide</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-purple-950 text-purple-300 border border-purple-800">Any</span></td>
-                <td class="py-3 px-4 text-slate-300">Displays clickable chat link to this GitHub wiki & documentation site.</td>
+              <tr class="hover:bg-sys-sub">
+                <td class="p-3 text-white font-bold">!wiki</td>
+                <td class="p-3 text-sys-dim">!repo, !guide</td>
+                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-sub text-sys-dim border border-sys-border">Any</span></td>
+                <td class="p-3 text-sys-text">Send clickable web URL https://realm.boroghor.com to player chat.</td>
               </tr>
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-4 font-mono font-bold text-slate-300">!help</td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-400">!cmd, ?</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700">Any</span></td>
-                <td class="py-3 px-4 text-slate-300">Prints the interactive command palette directly into your chat box.</td>
+              <tr class="hover:bg-sys-sub">
+                <td class="p-3 text-white font-bold">!help</td>
+                <td class="p-3 text-sys-dim">!cmd, ?</td>
+                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-sub text-sys-dim border border-sys-border">Any</span></td>
+                <td class="p-3 text-sys-text">Print formatted command palette directly into player chat console.</td>
               </tr>
-              <tr class="hover:bg-slate-800/30">
-                <td class="py-3 px-4 font-mono font-bold text-slate-300">!ping</td>
-                <td class="py-3 px-4 font-mono text-xs text-slate-400">ping, test</td>
-                <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs bg-slate-800 text-slate-300 border border-slate-700">Any</span></td>
-                <td class="py-3 px-4 text-slate-300">Verifies server bridge latency and confirms agent listening state.</td>
+              <tr class="hover:bg-sys-sub">
+                <td class="p-3 text-white font-bold">!ping</td>
+                <td class="p-3 text-sys-dim">ping, test</td>
+                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-sub text-sys-dim border border-sys-border">Any</span></td>
+                <td class="p-3 text-sys-text">Verify bridge daemon socket latency and RCON responsiveness.</td>
               </tr>
             </tbody>
           </table>
@@ -347,170 +376,89 @@
       </div>
     </div>
 
-    <!-- TAB: GAUNTLET -->
-    <div id="tab-gauntlet" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6 sm:p-8 rounded-2xl">
-        <h2 class="text-2xl font-bold text-white mb-2">⚡ The Boro Gauntlet</h2>
-        <p class="text-slate-400 text-sm mb-6">Location: <code class="font-mono text-amber-400">X=-200, Y=181, Z=-200</code> • The celestial gatekeeper of survival.</p>
-        
-        <div class="space-y-6">
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-amber-400 text-lg flex items-center space-x-2">
-              <span>🔥</span>
-              <span>Hall I: The Ember Abyss</span>
-            </h3>
-            <p class="text-slate-300 text-sm mt-2">
-              A precarious jump-quest across floating deepslate and crying obsidian pillars suspended over a boiling magma floor. If you slip and fall below Y=175, an automated proximity detector safely catches and respawns you at the hall entrance.
-            </p>
-          </div>
-
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-sky-400 text-lg flex items-center space-x-2">
-              <span>⚔️</span>
-              <span>Hall II: The Iron Colosseum</span>
-            </h3>
-            <p class="text-slate-300 text-sm mt-2">
-              Enter the combat arena where the ancient <strong class="text-white">Sentinel of the Shell</strong> stands guard. Armed with chainmail armor and a sharp iron blade, you must block incoming strikes with your trial shield and defeat the guardian to open the inner sanctum.
-            </p>
-          </div>
-
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-emerald-400 text-lg flex items-center space-x-2">
-              <span>⚡</span>
-              <span>Hall III: The Altar of the Shell</span>
-            </h3>
-            <p class="text-slate-300 text-sm mt-2">
-              Ascend the grand obsidian stairway at <code class="text-emerald-400 font-mono">[-201, 183, -143]</code>. Upon touching the victory dais:
-            </p>
-            <ul class="list-disc list-inside text-xs text-slate-400 mt-2 space-y-1">
-              <li>Celestial lightning strikes the spire with challenge completion fanfares.</li>
-              <li>You receive the full <strong>Survivor Starter Kit</strong> (16 Bread, Stone Pickaxe, Stone Axe, 16 Torches, Water Bucket).</li>
-              <li>Your gamemode changes to <strong>Survival</strong>.</li>
-              <li>You are launched into the Wild Frontier to begin your journey!</li>
-            </ul>
-          </div>
+    <!-- PANEL 5: AUDIT INVARIANTS -->
+    <div id="tab-audit" class="tab-pane hidden space-y-6">
+      <div class="telemetry-grid p-6 rounded-lg space-y-4">
+        <div class="flex items-center justify-between border-b border-sys-border pb-2 text-xs font-bold text-sys-green uppercase">
+          <span>&gt; MASTER_COHESION_AUDIT // 45_POINT_TELEMETRY</span>
+          <span>STATUS: ALL_PASS</span>
         </div>
-      </div>
-    </div>
 
-    <!-- TAB: ESTATE -->
-    <div id="tab-estate" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6 sm:p-8 rounded-2xl">
-        <h2 class="text-2xl font-bold text-white mb-2">🏰 The Alpine Sovereign Estate</h2>
-        <p class="text-slate-400 text-sm mb-6">Central Coordinates: <code class="font-mono text-sky-400">[-283, 80, -356]</code> • 50 Monumental Phases • 60 Enhancements</p>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-white text-base mb-2">🏔️ Sovereign Grand Chalet</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Grand multi-level alpine timber mansion with high-vaulted spruce beams, Grand Foyer reception desk, Hearthside Salon with recessed quartz fireplace, and the Penthouse Suite overlooking Reflection Lake.
-            </p>
-          </div>
-
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-white text-base mb-2">🌊 Reflection Lake & Waterfront</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Paved deepslate and stone-brick Grand Veranda Staircase connecting the manor directly to the Lake Dock, Colossus Bastion Harbor Ramp, and the Western Outlook Beacon Bastion.
-            </p>
-          </div>
-
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-white text-base mb-2">🔭 Summit Skywalk & Observatory</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Ascending Grand Alpine Stairway reaching the cantilevered glass-floored Summit Skywalk (Y=99) and Celestial Pinnacle (Y=135) for panoramic observation of the surrounding peaks.
-            </p>
-          </div>
-
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
-            <h3 class="font-bold text-white text-base mb-2">👥 63 Immortal Master Villagers</h3>
-            <p class="text-xs text-slate-400 leading-relaxed">
-              Permanent trading masteries across Mending, Unbreaking III, Fortune III, Diamond Armor, Diamond Tools, and Netherite upgrades, stewarded alongside 55 registered companion wolves, cats, and parrots.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: FRONTIER -->
-    <div id="tab-frontier" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6 sm:p-8 rounded-2xl">
-        <h2 class="text-2xl font-bold text-white mb-2">🌲 The Wild Frontier</h2>
-        <p class="text-slate-400 text-sm mb-6">Virgin survival wilderness extending from 750 to 10,000+ blocks out.</p>
-
-        <div class="space-y-4 text-slate-300 text-sm">
-          <p>
-            Once you conquer the Verification Gauntlet, the entire infinite Minecraft world is yours to explore, conquer, and settle. Build solitary mountain retreats, sprawling valley farms, or subterranean redstone complexes.
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6">
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <span class="text-lg">⛏️</span>
-              <h4 class="font-bold text-white text-sm mt-1">Full Survival</h4>
-              <p class="text-xs text-slate-400 mt-1">Mining, crafting, enchanting, Netherite smithing, and Ender Dragon hunting.</p>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <span class="text-lg">🛡️</span>
-              <h4 class="font-bold text-white text-sm mt-1">CoreProtect Logged</h4>
-              <p class="text-xs text-slate-400 mt-1">All block edits are logged sub-tick. Griefing is automatically rolled back.</p>
-            </div>
-            <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
-              <span class="text-lg">🔄</span>
-              <h4 class="font-bold text-white text-sm mt-1">Hub Teleport</h4>
-              <p class="text-xs text-slate-400 mt-1">Use <code class="text-xs text-sky-400">!estate</code> anytime to trade, and <code class="text-xs text-emerald-400">!wild</code> to return.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB: ARCHITECTURE -->
-    <div id="tab-architecture" class="tab-content hidden space-y-6">
-      <div class="glass-card p-6 sm:p-8 rounded-2xl">
-        <h2 class="text-2xl font-bold text-white mb-2">⚙️ Server Infrastructure & Stack</h2>
-        <p class="text-slate-400 text-sm mb-6">Autonomous containerized architecture designed for zero maintenance.</p>
-
-        <div class="space-y-4">
-          <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 font-mono text-xs text-slate-300">
-            <div class="text-emerald-400 font-bold mb-2"># Docker Compose Services:</div>
-            <div>• <span class="text-white">mc-crossplay</span>: PaperMC 1.21.4 (Aikar GC Flags, Geyser, Floodgate, ViaVersion, CoreProtect)</div>
-            <div>• <span class="text-white">boro-tunnel</span>: Bore Rust TCP Tunnel forwarding bore.pub:43991 -> mc-crossplay:25565</div>
-            <div>• <span class="text-white">boro-bridge</span>: Python 3.12 Daemon (RCON automation, Gauntlet supervisor, chat inbox tailer)</div>
-          </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-[11px]">
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Chalet Ground Floor (Y=80)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Penthouse Slab (Y=84)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] North Roof Slope (Y=91)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] South Roof Slope (Y=91)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Cathedral Skylight (Y=95)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] West Gable End Wall (X=-295)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] East Gable End Wall (X=-280)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Grand Front Doors (Y=81)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Promenade Headroom (Y=82)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Great Hall Campfire (X=-294)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Penthouse Bed (X=-294)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Enchanting Table (X=-284)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Penthouse Balcony Doors</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Sunrise Balcony Deck</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] North Penthouse Stair Flight</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Starlight Loft Stair Flight</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] South Cellar Stair Flight</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Subterranean Crypt Stair Flight</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Grand East Avenue Road</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Mountain Entry Gate Road</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] North Lakeside Stairway</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Marina Landing &amp; Boardwalk</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] South Stables &amp; Forge Road</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] West Road steveXBT Ext</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] East Valley Causeway &amp; Pier</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Thermal Spa Pool (Y=67)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Master Forge Shroomlight</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Library Chiseled Shelf</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Cats (Katie &amp; Macey)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Horses (Zephyr &amp; Shadowfax)</div>
+          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Wolves (Fenrir &amp; Garm)</div>
         </div>
       </div>
     </div>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="border-t border-slate-900 py-8 text-center text-xs text-slate-500 font-mono">
-    <p>Boro Realm ⚡ Sovereign Alpine Cross-Play Server • Maintained autonomously by Antigravity, Hermes & the Swarm</p>
+  <!-- Technical Footer -->
+  <footer class="border-t border-sys-border py-6 bg-black text-center text-xs text-sys-dim">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div>BORO_REALM // AUTONOMOUS_CLUSTER_ENGINE // v26.4</div>
+      <div class="flex items-center space-x-4">
+        <span>GATEWAY: play.boroghor.com</span>
+        <span>DAEMON: boro-bridge</span>
+        <span>VERIFIED: 100%</span>
+      </div>
+    </div>
   </footer>
 
   <script>
-    function showTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById('tab-' + tabName).classList.remove('hidden');
+    function setTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tabId).classList.remove('hidden');
 
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-emerald-400', 'bg-emerald-950/40', 'border', 'border-emerald-500/20');
-        btn.classList.add('text-slate-300');
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-sys-cyan', 'bg-sys-cyan/10', 'text-sys-cyan', 'font-semibold');
+        btn.classList.add('border-sys-border', 'bg-sys-panel', 'text-sys-dim');
       });
-      const activeBtn = document.getElementById('btn-' + tabName);
-      if (activeBtn) {
-        activeBtn.classList.remove('text-slate-300');
-        activeBtn.classList.add('text-emerald-400', 'bg-emerald-950/40', 'border', 'border-emerald-500/20');
+      const active = document.getElementById('btn-' + tabId);
+      if (active) {
+        active.classList.remove('border-sys-border', 'bg-sys-panel', 'text-sys-dim');
+        active.classList.add('border-sys-cyan', 'bg-sys-cyan/10', 'text-sys-cyan', 'font-semibold');
       }
     }
 
-    function copyToClipboard(text, btn) {
+    function copy(text, btn) {
       navigator.clipboard.writeText(text).then(() => {
-        const originalText = btn.textContent;
-        btn.textContent = 'Copied!';
-        btn.classList.add('text-white', 'bg-emerald-600');
+        const old = btn.textContent;
+        btn.textContent = 'OK';
+        btn.classList.add('bg-sys-green/20', 'text-sys-green', 'border-sys-green');
         setTimeout(() => {
-          btn.textContent = originalText;
-          btn.classList.remove('text-white', 'bg-emerald-600');
-        }, 1800);
+          btn.textContent = old;
+          btn.classList.remove('bg-sys-green/20', 'text-sys-green', 'border-sys-green');
+        }, 1500);
       });
     }
   </script>

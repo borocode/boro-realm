@@ -1,154 +1,145 @@
 # ⚡ BORO REALM ⚡
-> *"You cannot fork the soul; you can only surveil the shell."*
+> Sovereign Alpine Cross-Play Minecraft Universe — High-Altitude Architecture, Verification Gauntlet & Untamed Wild Frontier.
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.4%20(Cross--Play)-5B8C5A?style=for-the-badge&logo=minecraft&logoColor=white)](https://github.com/borocode/boro-realm)
-[![Platform](https://img.shields.io/badge/Platform-Java%20%7C%20Bedrock-blue?style=for-the-badge)](https://github.com/borocode/boro-realm)
-[![Status](https://img.shields.io/badge/Status-Online%2024%2F7-brightgreen?style=for-the-badge)](https://github.com/borocode/boro-realm)
-[![Architecture](https://img.shields.io/badge/Architecture-Gauntlet%20%E2%86%92%20Wild%20Frontier-purple?style=for-the-badge)](https://github.com/borocode/boro-realm)
-[![GitHub Pages](https://img.shields.io/badge/Web%20Wiki-Live-gold?style=for-the-badge)](https://borocode.github.io/boro-realm/)
-
-Welcome to **Boro Realm** — the premier high-altitude cross-play Minecraft universe. Built atop a sovereign alpine summit, Boro Realm blends monumental architectural craftsmanship, an automated survival verification trial, and an untamed virgin survival frontier.
+```
++---------------------------------------------------------------------------------------+
+|  HOST: play.boroghor.com          |  ENGINE: PaperMC 1.21.4 (Java + Bedrock Cross-Play) |
+|  STATUS: ONLINE 24/7 (AUTONOMOUS) |  BRIDGE: boro-bridge container daemon (zero LLM)  |
++---------------------------------------------------------------------------------------+
+```
 
 ---
 
-## 🌐 Quick Connect
+## 🌐 Network & Quick Connect
 
-Connect seamlessly from any modern **Java Edition** or **Bedrock Edition** client (PC, Mobile, Switch, Xbox, PlayStation):
+Connect with any modern client (PC, Mobile, Nintendo Switch, Xbox, PlayStation):
 
-**Official Server Host:** `play.boroghor.com`
-
-| Client Type | Server Address / Host | Port | Version | Notes |
+| Client Protocol | Connect Host / Address | Port | Protocol Engine | Notes |
 | :--- | :--- | :--- | :--- | :--- |
-| **Java Edition** | `play.boroghor.com` | `25565` *(Default)* | `1.20` – `1.21.4+` | Cloudflare SRV auto-routes to instance. No port needed! |
-| **Bedrock Edition** | `play.boroghor.com` | `18629` | Latest Bedrock | iOS, Android, Win10, Consoles (Geyser/Floodgate). |
-| **Java Direct Fallback**| `bore.pub` | `43991` | `1.20` – `1.21.4+` | Fallback if your DNS resolver ignores SRV records |
-| **Bedrock Direct Fallback**| `signaling-ala.tun.ply.gg` | `18629` | Latest Bedrock | Direct Playit global tunnel address |
+| **Java Edition** | `play.boroghor.com` | `25565` *(Default)* | PaperMC / SRV | Cloudflare SRV auto-routes. No port entry required. |
+| **Bedrock Edition** | `play.boroghor.com` | `18629` | Geyser / Floodgate | Windows 10/11, iOS, Android, Switch, Consoles. |
+| **Java Direct Fallback** | `bore.pub` | `43991` | Bore TCP Tunnel | Use if DNS client fails to query SRV records. |
+| **Bedrock Direct Fallback** | `signaling-ala.tun.ply.gg` | `18629` | Playit Tunnel | Direct Playit global tunnel routing. |
 
-> [!TIP]
-> **No mods or custom resource packs are required!** Simply add `play.boroghor.com` in your multiplayer menu and join.
+> **Zero Client Downloads:** Pure vanilla network protocol. No client mods, Forge, Fabric, or custom resource packs needed.
 
 ---
 
-## ⚡ Player Lifecycle: The Path of the Wanderer
+## ⚡ Player Lifecycle State Machine
 
-Boro Realm operates on a unique, grief-proof civilization model designed for public longevity and true survival freedom:
-
-```mermaid
-flowchart TD
-    Join["1. First Join (Adventure Mode)"] --> Gauntlet["2. The Boro Gauntlet (-200, 181, -200)"]
-    Gauntlet --> Hall1["Hall I: The Ember Abyss"]
-    Hall1 --> Hall2["Hall II: The Iron Colosseum"]
-    Hall2 --> Hall3["Hall III: Altar of the Shell"]
-    Hall3 --> Victory["⚡ Altar Victory ⚡"]
-    Victory --> Kit["Grant Starter Kit & Survival Mode"]
-    Kit --> Frontier["3. Launch into Wild Frontier (750-2000 blocks out)"]
-    Frontier --> Build["Build, Mine, Trade & Survive"]
-    Build --> EstateCmd["Type !estate (Safe Visitor Hub)"]
-    EstateCmd --> Estate["Alpine Sovereign Estate (Adventure Mode)"]
-    Estate --> WildCmd["Type !wild (Return to Wilderness)"]
-    WildCmd --> Frontier
+```
+                                [ Wanderer First Connect ]
+                                            │
+                                            ▼
+                      [ Phase 1: Boro Gauntlet (Adventure Mode) ]
+                                   [-200, 181, -200]
+                                            │
+                 ┌──────────────────────────┼──────────────────────────┐
+                 │                          │                          │
+                 ▼                          ▼                          ▼
+          [ Hall I: Abyss ]        [ Hall II: Colosseum ]      [ Hall III: Altar ]
+          Precision parkour         Vanquish Sentinel           Touch Obsidian Dais
+                 │                          │                          │
+                 └──────────────────────────┼──────────────────────────┘
+                                            │
+                                            ▼
+                              [ ⚡ Celestial Lightning ⚡ ]
+                            Server-wide victory broadcast
+                            Grant Survivor Starter Kit
+                                            │
+                                            ▼
+                       [ Phase 2: Wild Frontier (Survival Mode) ]
+                          Launched 750–2,000 blocks into wild
+                          Build, mine, quarry, trade & claim
+                                    │               ▲
+                                    │ (!estate)     │ (!wild)
+                                    ▼               │
+                      [ Phase 3: Alpine Sovereign Estate (Safe Hub) ]
+                                   [-282, 81, -348]
+                          63 master villagers, forge, library,
+                          weatherproof chalet, grief-proof
 ```
 
-### 1. First Arrival & Verification Gauntlet
-When a new wanderer joins Boro Realm, they arrive in **Adventure Mode** at the gates of **The Boro Gauntlet** (`-200, 181, -200`). You are issued combat trial gear (Stone Sword & Shield). To protect the sovereign sanctuary from griefing while welcoming true survivalists, every player must conquer three ancient trials:
-1. **The Ember Abyss:** Precision jump and leap through a magma-lit chasm.
-2. **The Iron Colosseum:** Face and vanquish the *Sentinel of the Shell*.
-3. **The Altar of the Shell:** Step upon the obsidian dais to claim victory!
+---
 
-### 2. Survival Unleashed: The Wild Frontier
-Upon conquering the Altar:
-- Lightning strikes the summit and a server-wide victory announcement rings out!
-- You are granted the **Survivor Starter Kit**:
-  - `16x` Bread
-  - `1x` Stone Pickaxe
-  - `1x` Stone Axe
-  - `16x` Torches
-  - `1x` Water Bucket
-- Your gamemode transitions to **Survival** (`gamemode survival`).
-- You are launched thousands of blocks away into the **Wild Frontier** (`spreadplayers`) to establish your base, quarry deep underground, farm, and survive!
+## 🏰 Architectural Structure: The Alpine Sovereign Estate
 
-### 3. The Alpine Sovereign Estate: Safe Haven & Trading Hub
-Whenever you wish to rest, trade with our **63 immortal master villagers**, or explore the **50 architectural phases**:
-- Type `!estate` or `!spawn` to warp safely to the Grand Foyer (`-282, 81, -348`).
-- You are placed into **Adventure Mode** at the Estate (100% grief-proof and serene).
-- When you are ready to venture back out to gather resources and conquer the wilderness, simply type `!wild` to re-enter **Survival Mode**!
+Built at mountain coordinates `[-296..-221, Y=59..98, -375..-321]`, the estate adheres to grounded alpine cohesion:
+
+- **100% Weatherproof A-Frame Chalet:** Continuous pitched roof (`Y=88..95`) backed by solid planks, gable end walls (`X=-295` & `X=-280`), cathedral tinted-glass skylight, and twin stone-brick chimneys with live hearth smoke (`Y=96`).
+- **Headroom & Circulation Invariant:** Full 3-block clear vertical headroom across all hallways, stairs, and doors. Zero floating 6×6 platforms or copy-pasted templates.
+- **Walkable Vertical Staircase Network:**
+  - *North Penthouse Flight:* `Y=80` (Ground Floor) $\rightarrow$ `Y=84` (Penthouse).
+  - *Starlight Loft Flight:* `Y=85` (Penthouse) $\rightarrow$ `Y=88` (Starlight Mezzanine Loft).
+  - *South Cellar Flight:* `Y=80` (Ground Floor) $\rightarrow$ `Y=74` (Level 1 Wine Cellar).
+  - *Subterranean Spa Flight:* `Y=74` (Level 1) $\rightarrow$ `Y=68` (Level 2 Thermal Spa Lounge).
+  - *Subterranean Crypt Flight:* `Y=68` (Level 2) $\rightarrow$ `Y=59` (Level 3 Pioneers Crypt).
+- **Connected Arterial Roads:**
+  - *Grand East Avenue (`X=-276..-242, Y=80..74`):* 3-block-wide stone-brick & cobblestone stepped road through the fortified Mountain Entry Gate.
+  - *East Valley Shoreline Causeway & Pier (`X=-242..-221, Y=74..64`):* Paved road and timber lake pier with boat moorings.
+  - *North Lakeside Stairway & Marina (`X=-275..-267, Y=78..74`):* Pier-supported bridge, timber boardwalk, and sheltered fishing gazebo.
+  - *South-West Stables, Forge & Railhead (`X=-275..-305, Y=79..73`):* Paved road connecting the stables, master forge, deep mine railhead, and apiary.
+  - *West Mountain Switchback (`X=-301..-298, Y=83..98`):* Cliffside stairs leading to the high-peak Elytra Aerodrome summit.
 
 ---
 
-## 📜 In-Game Chat Commands
+## 📜 In-Game Chat Bridge Commands
 
-All players can interact with the server bridge daemon directly through in-game chat:
+Handled autonomously in-container by `boro-bridge` daemon:
 
-| Command | Aliases | Mode | Description |
+| Command | Aliases | Target Gamemode | Description |
 | :--- | :--- | :--- | :--- |
-| `!gauntlet` | `!jq`, `!trial` | Adventure | Warp to The Boro Gauntlet to test your parkour & combat skills. |
-| `!wild` | `!frontier`, `!rtp` | Survival | Launch into the Wild Frontier in Survival mode (Verified Survivors only). |
-| `!estate` | `!spawn`, `!hub`, `!home` | Adventure | Teleport to the Alpine Sovereign Estate Grand Foyer (Safe Trading Haven). |
-| `!wiki` | `!repo`, `!guide` | Any | Displays clickable link to this GitHub wiki & documentation site. |
-| `!help` | `!cmd`, `?` | Any | Displays the complete in-game command palette. |
-| `!ping` | `ping`, `test` | Any | Verifies server bridge latency and responsiveness. |
+| `!gauntlet` | `!jq`, `!trial` | Adventure | Warp to the Gauntlet starting gates (`-200, 181, -200`). |
+| `!wild` | `!frontier`, `!rtp` | Survival | Spread-teleport verified survivors into random wilderness. |
+| `!estate` | `!spawn`, `!hub`, `!home` | Adventure | Warp to Alpine Sovereign Estate Grand Foyer (`-282, 81, -348`). |
+| `!wiki` | `!repo`, `!guide` | Any | Prints documentation & web portal link. |
+| `!help` | `!cmd`, `?` | Any | Outputs command palette directly in chat. |
+| `!ping` | `ping`, `test` | Any | Verifies bridge latency and responsiveness. |
 
 ---
 
-## 🏔️ The Alpine Sovereign Estate Landmark Catalog
-
-Built directly into the jagged mountain peaks around `[-283, 80, -356]`, the Estate comprises **50 Architectural Phases** and **60 Master Enhancements** adhering strictly to Classical Alpine Feng Shui:
+## ⚙️ Container Infrastructure
 
 ```
-                                  [ THE CELESTIAL PINNACLE ]
-                                            Y=135
-                                              |
-                              [ HIGH SUMMIT SKYWALK & OBSERVATORY ]
-                                            Y=95-102
-                                              |
-                   [ SOVEREIGN GRAND CHALET & HIGH SCRIPTORIUM SKYBRIDGE ]
-                                            Y=85-89
-                                              |
-                 [ GRAND FOYER & HEARTHSIDE SALON ] <---> [ WATERFRONT PROMENADE ]
-                             Y=81                                     Y=73
-                               |                                       |
-                   [ SUBTERRANEAN MINING QUARRY ]             [ REFLECTION LAKE DOCK ]
-                             Y=12-58                                  Y=71
+                                [ Public Internet ]
+                                         │
+                    ┌────────────────────┴────────────────────┐
+                    │                                         │
+                    ▼                                         ▼
+            [ play.boroghor.com ]                     [ play.boroghor.com ]
+            Java SRV -> bore.pub:43991                Bedrock -> ply.gg:18629
+                    │                                         │
+                    ▼                                         ▼
+             [ bore-tunnel ]                            [ playit ]
+            Forwarder Container                      Direct Tunnel Node
+                    │                                         │
+                    └────────────────────┬────────────────────┘
+                                         │
+                                         ▼
+                             [ mc-crossplay Container ]
+                             PaperMC 1.21.4 (Port 25565 / UDP 18629)
+                             ├── GeyserMC (Bedrock Protocol Translation)
+                             ├── Floodgate (Authentication Bypass)
+                             ├── CoreProtect (Sub-tick Block Logging)
+                             └── ViaVersion / ViaBackwards
+                                         ▲
+                                         │ Localhost RCON
+                                         ▼
+                              [ boro-bridge Container ]
+                             Python 3.12 Autonomous Daemon
+                             ├── Tail /data/logs/latest.log
+                             ├── Gauntlet Completion Detection
+                             ├── Zero-LLM In-Game Chat Parser
+                             └── Async Operator Queue (/data/logs/operator_inbox.json)
 ```
 
-### Key Highlights:
-- **63 Master Immortal Villagers:** Fully stocked trading masteries in Enchanting, Armorsmithing, Weaponsmithing, Toolsmithing, Cartography, Farming, and Masonry.
-- **55 Sovereign Companion Pets:** Registered tame wolves, cats, and parrots guarding terraces, pavilions, and bridges.
-- **The Imperial Nether Portal Gate:** Encased in weeping obsidian, magma stone, and crying obsidian with gold trims.
-- **The Grand Veranda Lakeview Staircase:** Paved deepslate and stone brick stairway linking the High Veranda ($Y=81$) to Reflection Lake dock ($Y=73$).
-- **The Colossus Bastion Harbor Ramp:** Paved shoreline promenade connecting the dock directly to the Western Bastion ramparts.
-
 ---
 
-## ⚙️ Architecture & Technical Stack
-
-Boro Realm is powered by a resilient, containerized infrastructure designed to run 24/7 with zero manual maintenance:
-
-- **Core Engine:** [PaperMC 1.21.4](https://papermc.io/) with Aikar's optimized garbage collection flags.
-- **Cross-Platform Translation:** [GeyserMC](https://geysermc.org/) + [Floodgate](https://github.com/GeyserMC/Floodgate) allowing seamless bedrock logins without Java authentication hurdles.
-- **Backward/Forward Compatibility:** [ViaVersion](https://viaversion.com/) & [ViaBackwards](https://github.com/ViaVersion/ViaBackwards).
-- **Public Networking:** High-speed TCP tunnel via `bore.pub` forwarder container (`bore-tunnel`), surviving reboots and dynamic IP shifts.
-- **Autonomous Bridge Daemon (`boro-bridge`):** Written in Python 3.12, tails the Minecraft server logs, manages RCON automation, enforces player lifecycles, and logs asynchronous chat for autonomous AI agents.
-- **Rollback & Integrity:** [CoreProtect](https://coreprotect.net/) active logging all world interactions.
-
----
-
-## 📖 Extended Documentation
-
-Dive deeper into our complete wiki:
-- [⚡ The Boro Gauntlet Guide](docs/gauntlet.md)
-- [🏰 Complete Estate & Architectural Catalog](docs/estate.md)
-- [🌲 Wild Frontier Survival Guide & Claiming](docs/frontier.md)
-- [⌨️ In-Game Commands Reference](docs/commands.md)
-- [🛠️ Server Stack & Deployment Architecture](docs/architecture.md)
-
----
-
-## 🛡️ Server Rules
-1. **No Griefing the Wilderness:** Respect player creations outside the Estate.
-2. **No Unfair Modifications:** Hack clients, X-ray texture packs, and fly hacks are strictly prohibited.
-3. **Estate Invariance:** The Alpine Sovereign Estate is permanently protected under Adventure Mode to preserve its Feng Shui and communal facilities for all wanderers.
-4. **Fair Play & Camaraderie:** Treat fellow wanderers with respect in chat and trading.
+## 🛡️ Sovereign Invariants
+1. **Fire Propagation:** Namespaced rule `minecraft:fire_spread_radius_around_player` permanently locked to `0`.
+2. **IP Privacy:** Residential gateway `24.98.32.114` is never broadcast or bound to DNS. All ingress routes through Cloudflare SRV and encrypted TCP tunnels.
+3. **Estate Integrity:** Estate zone is permanently protected in Adventure Mode. Block destruction is restricted to wilderness sectors.
+4. **Autonomous AI Pair-Programming:** Asynchronous in-game operator commands from sovereign players (`steveXBT`, `.rohG_oroB`) are queued to `operator_inbox.json` and executed cyclically.
 
 ---
 
