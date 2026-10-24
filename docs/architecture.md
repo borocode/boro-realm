@@ -1,80 +1,102 @@
-# 🛠️ Server Stack & Deployment Architecture
+# DOC_01 // CONTAINER_STACK_AND_NETWORK_ARCHITECTURE
 
-> *"You cannot fork the soul; you can only surveil the shell."*
-
----
-
-## 🏛️ System Overview
-
-Boro Realm runs on a high-efficiency multi-container Docker Compose architecture hosted locally and securely tunneled to the public internet:
-
-```
-                          [ PUBLIC PLAYERS & WEB VISITORS ]
-                                          |
-         +--------------------------------+-------------------------------+
-         | (Web Wiki: HTTPS)              | (Unified Game Host: Java)     | (Unified Game Host: Bedrock)
-         v                                v                               v
-realm.boroghor.com               play.boroghor.com                play.boroghor.com
-         |                     (_minecraft._tcp SRV)            (Port 18629 -> Playit)
-         v                                |                               v
-[Cloudflare Argo Tunnel]                  v                       [Playit UDP Tunnel]
-         |                          bore.pub:43991                        |
-         v                                |                               |
-   boro-web:80                            v                               |
-   (Nginx Alpine)                    boro-tunnel                          |
- (Port 8767 Host)                  (Bore TCP Client)                      |
-                                          |                               |
-                                          +----------->+<-----------------+
-                                                       |
-                                            [ boro-minecraft: Paper 1.21.4 ]
-                                            • Java: 25565 / RCON: 25575
-                                            • Bedrock: 19132 UDP (Geyser)
-                                                       ^
-                                                       | RCON & Log Volume
-                                            +----------+----------+
-                                            |     boro-bridge     |
-                                            | (Python Automation) |
-                                            +---------------------+
+```text
+MODULE       : INFRASTRUCTURE_AND_IPC
+COMPOSE_ROOT : Projects/minecraft-server/docker-compose.yml
+SERVER_CORE  : PaperMC 26.3 (itzg/minecraft-server:latest)
+BRIDGE_CORE  : Python 3.12 (bridge/bridge.py)
 ```
 
 ---
 
-## 📦 Container Services
+## 1. TOPOLOGY_DIAGRAM
 
-### 1. `mc-crossplay` (`boro-minecraft`)
-- **Base Image:** `itzg/minecraft-server:latest`
-- **Flavor:** PaperMC 1.21.4
-- **JVM Flags:** Aikar's high-performance garbage collection flags
-- **Memory Allocation:** 3GB RAM (expandable to host bounds)
-- **Ports Exposed:**
-  - `25565/tcp` — Java Edition default
-  - `19132/udp`, `19132/tcp`, `19133/udp` — Bedrock Edition crossplay
-- **Active Plugins:**
-  - **GeyserMC & Floodgate:** Translates Bedrock network packets and entities to Java in real-time, allowing mobile, console, and Bedrock PC players to play seamlessly with Java players without requiring Java accounts.
-  - **ViaVersion & ViaBackwards:** Allows client versions spanning multiple major releases (1.20.x up to 1.21.x+) to connect without version rejections.
-  - **CoreProtect:** Sub-tick transaction database logging all world interactions, inventory changes, and block events.
-
-### 2. `tunnel` (`boro-tunnel`)
-- **Base Image:** `alpine:3.20`
-- **Binary:** Rust-based [`bore`](https://github.com/ekzhang/bore) client
-- **Function:** Establishes an encrypted, resilient TCP tunnel to `bore.pub:43991`, forwarding external Java traffic directly to `mc-crossplay:25565`.
-- **Resilience:** Supervised by a restart loop with exponential backoff and Docker restart policies.
-
-### 3. `bridge` (`boro-bridge`)
-- **Base Image:** `python:3.12-alpine`
-- **Engine:** Persistent Python daemon (`bridge.py`)
-- **Responsibilities:**
-  - Real-time RCON client communication over private Docker network (`mc-crossplay:25575`).
-  - Active log-tailing with byte-offset tracking across log rotations (`/data/logs/latest.log`).
-  - Automated Gauntlet verification mechanics (respawning fell players from the pit, summoning the Sentinel, detecting Altar victory, issuing kits, and triggering wilderness launches).
-  - In-game chat command engine (`!gauntlet`, `!wild`, `!estate`, `!wiki`, `!help`, `!ping`).
-  - Appends formatted chat events to `chat_inbox.log` for multi-agent swarm processing.
-  - Survivor registry state persistence in `survivors.json`.
+```text
+                           [ CLIENT_INGRESS_AND_HTTPS_PORTAL ]
+                                            |
+         +----------------------------------+----------------------------------+
+         | (HTTPS / TCP 443)                | (Java TCP 25565 SRV)             | (Bedrock UDP 18629)
+         v                                  v                                  v
+realm.boroghor.com                 play.boroghor.com                  play.boroghor.com:18629
+         |                       (_minecraft._tcp SRV)                         |
+         v                                  |                                  v
+[Cloudflare Tunnel]                         v                         [Playit UDP Tunnel]
+         |                            bore.pub:43991                  (signaling-ala.tun.ply.gg)
+         v                                  |                                  |
+  [ boro-web:80 ]                           v                                  |
+  (Host Port 8767)                   [ boro-tunnel ]                           |
+                                    (Bore Rust Client)                         |
+                                            |                                  |
+                                            +----------------+-----------------+
+                                                             |
+                                                             v
+                                              [ boro-minecraft (Paper 26.3) ]
+                                              - 25565/tcp (Java Protocol)
+                                              - 19132/udp (Geyser Bedrock)
+                                              - 25575/tcp (Local RCON)
+                                                             ^
+                                                             | RCON + /data/logs Volume
+                                                             v
+                                                     [ boro-bridge ]
+                                              (Python 3.12 Autonomous Daemon)
+```
 
 ---
 
-## 🔒 Security & Grief Prevention
-- **Default Adventure Mode:** The server root configuration enforces `MODE: "adventure"`. Players cannot break or place blocks unless granted Survival mode.
-- **Autonomous Zone Segmentation:** Survival mode is strictly granted upon Gauntlet completion and automatically revoked upon returning to the Sovereign Estate via `!estate`.
-- **Whitelisting & Operator Boundaries:** Server operators are explicitly defined and verified; command injection via chat is prevented by strictly regex-matched command parsers.
-- **Continuous Backups:** Server state and world data are stored on host storage mounts (`./data`), surviving container lifecycles.
+## 2. CONTAINER_SPECIFICATIONS
+
+### 2.1 `mc-crossplay` (`boro-minecraft`)
+- **Image:** `itzg/minecraft-server:latest`
+- **Engine:** `PAPER` (`VERSION: "26.3"`)
+- **JVM Memory:** `MEMORY: "3G"` with Aikar's GC flags (`USE_AIKAR_FLAGS: "true"`)
+- **Server Properties:**
+  - `MODE: "adventure"`
+  - `DIFFICULTY: "normal"`
+  - `MAX_PLAYERS: "20"`
+  - `VIEW_DISTANCE: "10"`
+  - `SIMULATION_DISTANCE: "8"`
+  - `ONLINE_MODE: "false"` (required for Floodgate/Geyser cross-play authentication)
+  - `ENABLE_RCON: "true"` (`RCON_PORT: 25575`)
+- **Plugin Stack (`/data/plugins`):**
+  - `Geyser-Spigot.jar` — Translates Bedrock UDP (`19132/udp`) packets to Java protocol.
+  - `floodgate-spigot.jar` — Authenticates Bedrock Xbox Live sessions with `.` prefix (`e.g., .rohG_oroB`).
+  - `ViaVersion.jar` & `ViaBackwards.jar` — Multi-version protocol compatibility.
+  - `CoreProtect.jar` — Sub-tick block, chest, and entity transaction logging.
+
+### 2.2 `tunnel` (`boro-tunnel`)
+- **Image:** `alpine:3.20`
+- **Network Mode:** `service:mc-crossplay` (shares network namespace directly with `boro-minecraft`)
+- **Command Loop:**
+  ```sh
+  while true; do
+    bore local 25565 --to bore.pub --port 43991 || sleep 3
+    sleep 2
+  done
+  ```
+
+### 2.3 `bridge` (`boro-bridge`)
+- **Image:** `python:3.12-alpine`
+- **Entrypoint:** `python -u /app/bridge.py`
+- **Mounts:**
+  - `./bridge:/app`
+  - `./data/logs:/data/logs`
+- **Core Functions:**
+  - Persistent TCP RCON socket client (`mc-crossplay:25575`) with automatic reconnect.
+  - Non-blocking file tailer tracking inode rotation on `/data/logs/latest.log`.
+  - `2.0s` polling loop (`check_gauntlet()`) executing RCON selector checks for the Boro Gauntlet at `[-200, 181, -200]`.
+  - Stateful persistence in `/data/logs/survivors.json` and `/data/logs/operator_inbox.json`.
+
+### 2.4 `web` (`boro-web`)
+- **Image:** `nginx:alpine`
+- **Port Binding:** `8767:80/tcp`
+- **Mount:** `../boro-realm:/usr/share/nginx/html:ro`
+- **Ingress:** Exposed publicly via Cloudflare Tunnel at `https://realm.boroghor.com/`.
+
+---
+
+## 3. SECURITY_AND_STATE_INVARIANTS
+
+1. **Gateway Privacy:** Host residential IP is never exposed in DNS records or repository artifacts. Java traffic transits `bore.pub:43991`; Bedrock traffic transits `signaling-ala.tun.ply.gg:18629`; HTTP traffic transits Cloudflare edge.
+2. **Fire Spread Suppression:** Gamerule `minecraft:fire_spread_radius_around_player` is locked to `0` so decorative hearth campfires (`-294, 80, -347`) and chimney flues (`Y=95..96`) never ignite surrounding timber.
+3. **Zone Gamemode Isolation:** Non-operator players inside the Alpine Sovereign Estate (`!estate`) are strictly locked to `gamemode adventure`. `gamemode survival` is only active after conquering the Gauntlet and warping to the Wild Frontier (`!wild`).
+4. **RCON Sanitization:** Player names extracted from `/data/logs/latest.log` are regex-validated (`[\.\w]{2,20}`) before interpolation into RCON commands.

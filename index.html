@@ -1,466 +1,904 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BORO REALM // SYS_SPEC_v26.4</title>
-  <meta name="description" content="Technical Specification & Network Gateway for Boro Realm (play.boroghor.com) — Cross-Play Minecraft Server, Infrastructure, State Machine, and Master Audit Telemetry.">
+  <title>BORO_REALM // SYS_SPEC_26.3</title>
+  <meta name="description" content="BORO_REALM Technical Specification: Network Ingress, Container Topology, Bridge State Machine, Voxel Elevation Graph, and 45-Point Structural Invariant Registry.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
-          },
-          colors: {
-            sys: {
-              bg: '#05070a',
-              panel: '#090d14',
-              sub: '#0f1724',
-              border: '#1a2436',
-              borderBright: '#2a3b57',
-              cyan: '#00f3ff',
-              green: '#00ff66',
-              amber: '#ffb700',
-              red: '#ff0055',
-              text: '#d1d9e6',
-              dim: '#6b7d99'
-            }
-          }
-        }
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-0: #06080b;
+      --bg-1: #0a0e14;
+      --bg-2: #0f151e;
+      --bg-3: #151d2a;
+      --line: #1e293b;
+      --line-hi: #334155;
+      --fg-0: #e2e8f0;
+      --fg-1: #94a3b8;
+      --fg-2: #64748b;
+      --cyan: #00e5ff;
+      --green: #00ff66;
+      --amber: #ffb000;
+      --red: #ff3355;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 !important;
+    }
+
+    html, body {
+      background-color: var(--bg-0);
+      color: var(--fg-0);
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-image:
+        linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    a {
+      color: var(--cyan);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .shell {
+      max-width: 1400px;
+      margin: 0 auto;
+      border-left: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      background-color: rgba(6, 8, 11, 0.92);
+      min-height: 100vh;
+    }
+
+    /* Top System Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-1);
+      padding: 8px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-left, .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .sys-id {
+      font-weight: 700;
+      color: var(--fg-0);
+      letter-spacing: 0.08em;
+    }
+    .sys-id span {
+      color: var(--cyan);
+    }
+    .kv {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .kv .k {
+      color: var(--fg-2);
+    }
+    .kv .v {
+      color: var(--fg-0);
+      font-weight: 600;
+    }
+    .kv .v.ok {
+      color: var(--green);
+    }
+    .kv .v.cyan {
+      color: var(--cyan);
+    }
+    .kv .v.amber {
+      color: var(--amber);
+    }
+
+    /* Sub-navigation bar */
+    .nav-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-0);
+    }
+    .nav-btn {
+      background: transparent;
+      color: var(--fg-1);
+      border: none;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 14px;
+      text-align: left;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 0.04em;
+    }
+    .nav-btn:hover {
+      background: var(--bg-2);
+      color: var(--fg-0);
+    }
+    .nav-btn.active {
+      background: var(--bg-2);
+      color: var(--cyan);
+      box-shadow: inset 0 -2px 0 var(--cyan);
+    }
+    .nav-btn .idx {
+      color: var(--fg-2);
+      font-weight: 400;
+    }
+
+    /* Section Header */
+    .sec-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-2);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 8px 16px;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .sec-head .title {
+      font-weight: 700;
+      color: var(--cyan);
+    }
+    .sec-head .meta {
+      color: var(--fg-2);
+    }
+
+    /* Grid layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    @media (max-width: 960px) {
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
       }
     }
-  </script>
-  <style>
-    body {
-      background-color: #05070a;
-      background-image: 
-        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
-      background-size: 32px 32px;
-      color: #d1d9e6;
+
+    .cell {
+      padding: 16px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: var(--bg-1);
     }
-    .crt-scanline {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-      background-size: 100% 4px;
-      z-index: 999;
-      pointer-events: none;
-      opacity: 0.35;
+    .cell:last-child {
+      border-right: none;
     }
-    .telemetry-grid {
-      border: 1px solid #1a2436;
-      background-color: rgba(9, 13, 20, 0.85);
-      backdrop-filter: blur(8px);
+    .cell-title {
+      font-size: 11px;
+      color: var(--fg-2);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
     }
-    .telemetry-grid:hover {
-      border-color: #2a3b57;
+
+    /* Endpoint Copy Box */
+    .endpoint-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-0);
+      border: 1px solid var(--line-hi);
+      padding: 10px 12px;
+      margin-bottom: 10px;
     }
-    .glow-cyan {
-      box-shadow: 0 0 12px rgba(0, 243, 255, 0.15);
+    .endpoint-val {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--fg-0);
+      letter-spacing: 0.02em;
     }
-    .glow-green {
-      box-shadow: 0 0 12px rgba(0, 255, 102, 0.15);
+    .btn-copy {
+      background: var(--bg-2);
+      color: var(--cyan);
+      border: 1px solid var(--cyan);
+      padding: 4px 10px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+    .btn-copy:hover {
+      background: var(--cyan);
+      color: var(--bg-0);
+    }
+    .btn-copy.copied {
+      border-color: var(--green);
+      background: var(--green);
+      color: var(--bg-0);
+    }
+
+    /* Data Tables */
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table.spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+    }
+    table.spec-table th,
+    table.spec-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      vertical-align: top;
+    }
+    table.spec-table th:last-child,
+    table.spec-table td:last-child {
+      border-right: none;
+    }
+    table.spec-table th {
+      background: var(--bg-1);
+      color: var(--fg-2);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    table.spec-table tr:hover td {
+      background: var(--bg-2);
+    }
+
+    /* Schematic Pre */
+    pre.schematic {
+      background: var(--bg-0);
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 11.5px;
+      line-height: 1.45;
+      color: var(--fg-0);
+      border-bottom: 1px solid var(--line);
+    }
+
+    /* Status Tags */
+    .tag {
+      display: inline-block;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      border: 1px solid currentColor;
+      text-transform: uppercase;
+    }
+    .tag-pass { color: var(--green); background: rgba(0, 255, 102, 0.06); }
+    .tag-cyan { color: var(--cyan); background: rgba(0, 229, 255, 0.06); }
+    .tag-amber { color: var(--amber); background: rgba(255, 176, 0, 0.06); }
+
+    /* Filter Input */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 16px;
+      background: var(--bg-1);
+      border-bottom: 1px solid var(--line);
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .filter-input {
+      background: var(--bg-0);
+      border: 1px solid var(--line-hi);
+      color: var(--fg-0);
+      font-family: inherit;
+      font-size: 12px;
+      padding: 6px 10px;
+      min-width: 280px;
+      outline: none;
+    }
+    .filter-input:focus {
+      border-color: var(--cyan);
+    }
+
+    .footer {
+      padding: 14px 16px;
+      background: var(--bg-1);
+      color: var(--fg-2);
+      font-size: 11px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
     }
   </style>
 </head>
-<body class="font-mono text-xs sm:text-sm antialiased selection:bg-cyan-500 selection:text-black">
-  <div class="crt-scanline"></div>
+<body>
+  <div class="shell">
 
-  <!-- Terminal Header / Telemetry Bar -->
-  <header class="border-b border-sys-border bg-sys-panel/90 sticky top-0 z-50 backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <span class="text-sys-cyan font-bold tracking-widest text-base">BORO::REALM</span>
-        <span class="text-sys-dim text-xs hidden sm:inline">[NET_NODE_247]</span>
-        <span class="px-1.5 py-0.5 text-[10px] bg-sys-green/10 text-sys-green border border-sys-green/30 rounded font-semibold uppercase">
-          ONLINE 24/7
-        </span>
+    <!-- TOP SYSTEM TELEMETRY BAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="sys-id">BORO_REALM <span>// SYS_SPEC_26.3</span></div>
+        <div class="kv"><span class="k">STATE:</span><span class="v ok">ONLINE_24_7</span></div>
+        <div class="kv"><span class="k">ENGINE:</span><span class="v cyan">PAPER_26.3</span></div>
+        <div class="kv"><span class="k">FIRE_SPREAD_RADIUS:</span><span class="v ok">0 (LOCKED)</span></div>
+        <div class="kv"><span class="k">AUDIT:</span><span class="v ok">45/45 PASS</span></div>
+      </div>
+      <div class="topbar-right">
+        <div class="kv"><span class="k">UTC_CLOCK:</span><span class="v" id="utc-clock">00:00:00Z</span></div>
+        <a href="https://github.com/borocode/boro-realm" target="_blank">[GIT_REPO: borocode/boro-realm]</a>
+      </div>
+    </header>
+
+    <!-- NAVIGATION JUMP BAR -->
+    <nav class="nav-strip">
+      <button class="nav-btn active" onclick="scrollToSec('sec-ingress', this)">
+        <span>NETWORK_INGRESS</span><span class="idx">01</span>
+      </button>
+      <button class="nav-btn" onclick="scrollToSec('sec-topology', this)">
+        <span>CONTAINER_TOPOLOGY</span><span class="idx">02</span>
+      </button>
+      <button class="nav-btn" onclick="scrollToSec('sec-fsm', this)">
+        <span>BRIDGE_STATE_MACHINE</span><span class="idx">03</span>
+      </button>
+      <button class="nav-btn" onclick="scrollToSec('sec-voxel', this)">
+        <span>VOXEL_ARCHITECTURE</span><span class="idx">04</span>
+      </button>
+      <button class="nav-btn" onclick="scrollToSec('sec-audit', this)">
+        <span>45_POINT_INVARIANTS</span><span class="idx">05</span>
+      </button>
+    </nav>
+
+    <!-- 01 // NETWORK INGRESS MATRIX -->
+    <section id="sec-ingress">
+      <div class="sec-head">
+        <span class="title">01 // NETWORK_INGRESS_MATRIX</span>
+        <span class="meta">RESIDENTIAL_IP_EXPOSURE: NONE (TUNNELED)</span>
       </div>
 
-      <div class="flex items-center space-x-2 text-xs">
-        <span class="text-sys-dim">CORE:</span>
-        <span class="text-sys-cyan">1.21.4_CROSSPLAY</span>
-        <span class="text-sys-border">|</span>
-        <a href="https://github.com/borocode/boro-realm" target="_blank" class="text-sys-dim hover:text-sys-cyan border border-sys-border px-2 py-1 rounded bg-sys-sub hover:border-sys-cyan transition">
-          SRC_REPO &nearr;
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-
-    <!-- Top Sys Info / Machine Banner -->
-    <div class="telemetry-grid p-4 sm:p-6 rounded-lg glow-cyan">
-      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-sys-border pb-4 mb-4">
-        <div>
-          <div class="text-[10px] text-sys-dim uppercase tracking-wider">SYSTEM_SPECIFICATION &amp; TELEMETRY</div>
-          <h1 class="text-xl sm:text-2xl font-bold text-white tracking-tight mt-0.5">
-            play.boroghor.com // CLUSTER_GATEWAY
-          </h1>
-        </div>
-        <div class="flex items-center space-x-4 text-xs">
-          <div><span class="text-sys-dim">AUDIT_PASS:</span> <span class="text-sys-green font-bold">45/45 (100%)</span></div>
-          <div><span class="text-sys-dim">FIRE_TICK:</span> <span class="text-sys-cyan font-bold">RADIUS_0 (IMMUTABLE)</span></div>
-          <div><span class="text-sys-dim">SECURITY:</span> <span class="text-sys-green font-bold">AIRGAPPED_RESIDENTIAL_IP</span></div>
-        </div>
-      </div>
-
-      <!-- Quick Connect Dual-Stack Terminal Table -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        
-        <!-- Java Protocol Block -->
-        <div class="bg-sys-sub p-4 rounded border border-sys-border">
-          <div class="flex items-center justify-between text-xs text-sys-cyan mb-2 font-bold uppercase tracking-wider">
-            <span>&gt; JAVA_EDITION_ENDPOINT</span>
-            <span class="text-sys-dim text-[10px]">TCP // SRV_AUTO</span>
+      <div class="grid-2">
+        <!-- JAVA ENDPOINT -->
+        <div class="cell">
+          <div class="cell-title">
+            <span>PROTOCOL_A // JAVA_EDITION (TCP)</span>
+            <span class="tag tag-cyan">SRV_ROUTED</span>
           </div>
-          <div class="bg-black/60 p-2.5 rounded border border-sys-border flex items-center justify-between">
+          <div class="endpoint-box">
             <div>
-              <div class="text-[10px] text-sys-dim">HOST_ADDR</div>
-              <div class="text-white font-bold text-sm tracking-wide">play.boroghor.com</div>
+              <div style="font-size:10px;color:var(--fg-2);">PRIMARY_HOSTNAME (PORT 25565 AUTO)</div>
+              <div class="endpoint-val">play.boroghor.com</div>
             </div>
-            <button onclick="copy('play.boroghor.com', this)" class="px-3 py-1 bg-sys-cyan/10 hover:bg-sys-cyan/20 border border-sys-cyan/40 text-sys-cyan rounded text-xs transition">
-              COPY
-            </button>
+            <button class="btn-copy" onclick="copyText('play.boroghor.com', this)">COPY</button>
           </div>
-          <div class="mt-3 flex items-center justify-between text-[11px] text-sys-dim">
-            <span>PORT: <span class="text-white">25565</span> (Default / SRV routed)</span>
-            <span>FALLBACK: <button onclick="copy('bore.pub:43991', this)" class="text-sys-cyan hover:underline">bore.pub:43991</button></span>
-          </div>
+          <table class="spec-table">
+            <tr>
+              <th>DNS_RECORD</th>
+              <td><code>_minecraft._tcp.play.boroghor.com</code> &rarr; <code>SRV 0 5 43991 bore.pub</code></td>
+            </tr>
+            <tr>
+              <th>DIRECT_FALLBACK</th>
+              <td>
+                <code>bore.pub:43991</code>
+                <button class="btn-copy" style="padding:1px 6px;margin-left:8px;" onclick="copyText('bore.pub:43991', this)">COPY</button>
+              </td>
+            </tr>
+            <tr>
+              <th>CLIENT_COMPAT</th>
+              <td>Vanilla Java <code>1.20.x</code> &ndash; <code>26.3 (1.21.5+)</code> via ViaVersion / ViaBackwards</td>
+            </tr>
+          </table>
         </div>
 
-        <!-- Bedrock Protocol Block -->
-        <div class="bg-sys-sub p-4 rounded border border-sys-border">
-          <div class="flex items-center justify-between text-xs text-sys-amber mb-2 font-bold uppercase tracking-wider">
-            <span>&gt; BEDROCK_EDITION_ENDPOINT</span>
-            <span class="text-sys-dim text-[10px]">UDP // GEYSER_FLOODGATE</span>
+        <!-- BEDROCK ENDPOINT -->
+        <div class="cell">
+          <div class="cell-title">
+            <span>PROTOCOL_B // BEDROCK_EDITION (UDP)</span>
+            <span class="tag tag-amber">GEYSER_UDP</span>
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <div class="bg-black/60 p-2.5 rounded border border-sys-border flex items-center justify-between">
-              <div>
-                <div class="text-[10px] text-sys-dim">SERVER_ADDRESS</div>
-                <div class="text-white font-bold text-xs truncate">play.boroghor.com</div>
-              </div>
-              <button onclick="copy('play.boroghor.com', this)" class="px-2 py-0.5 bg-sys-amber/10 hover:bg-sys-amber/20 border border-sys-amber/40 text-sys-amber rounded text-xs transition">
-                COPY
-              </button>
+          <div class="endpoint-box">
+            <div>
+              <div style="font-size:10px;color:var(--fg-2);">PRIMARY_HOSTNAME + EXPLICIT_UDP_PORT</div>
+              <div class="endpoint-val">play.boroghor.com : 18629</div>
             </div>
-            <div class="bg-black/60 p-2.5 rounded border border-sys-border flex items-center justify-between">
-              <div>
-                <div class="text-[10px] text-sys-dim">PORT</div>
-                <div class="text-white font-bold text-xs">18629</div>
-              </div>
-              <button onclick="copy('18629', this)" class="px-2 py-0.5 bg-sys-amber/10 hover:bg-sys-amber/20 border border-sys-amber/40 text-sys-amber rounded text-xs transition">
-                COPY
-              </button>
+            <div style="display:flex;gap:6px;">
+              <button class="btn-copy" onclick="copyText('play.boroghor.com', this)">HOST</button>
+              <button class="btn-copy" onclick="copyText('18629', this)">PORT</button>
             </div>
           </div>
-          <div class="mt-3 flex items-center justify-between text-[11px] text-sys-dim">
-            <span>CLIENTS: iOS, Android, Win10/11, Switch, Xbox, PS</span>
-            <span>TUNNEL: <button onclick="copy('signaling-ala.tun.ply.gg:18629', this)" class="text-sys-amber hover:underline">playit:18629</button></span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Navigation Sub-Pills -->
-    <div class="flex flex-wrap gap-2 text-xs">
-      <button onclick="setTab('infra')" id="btn-infra" class="tab-btn px-3 py-1.5 rounded border border-sys-cyan bg-sys-cyan/10 text-sys-cyan font-semibold">
-        [01] INFRASTRUCTURE_SPEC
-      </button>
-      <button onclick="setTab('statemachine')" id="btn-statemachine" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
-        [02] PLAYER_STATE_MACHINE
-      </button>
-      <button onclick="setTab('estate')" id="btn-estate" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
-        [03] ALPINE_ESTATE_COHESION
-      </button>
-      <button onclick="setTab('bridge')" id="btn-bridge" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
-        [04] IN_GAME_BRIDGE_API
-      </button>
-      <button onclick="setTab('audit')" id="btn-audit" class="tab-btn px-3 py-1.5 rounded border border-sys-border bg-sys-panel text-sys-dim hover:text-white">
-        [05] VERIFIED_INVARIANTS
-      </button>
-    </div>
-
-    <!-- PANEL 1: INFRASTRUCTURE SPEC -->
-    <div id="tab-infra" class="tab-pane space-y-6">
-      <div class="telemetry-grid p-6 rounded-lg space-y-4">
-        <div class="flex items-center justify-between border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
-          <span>&gt; DOCKER_COMPOSE_DEPLOYMENT_TOPOLOGY</span>
-          <span class="text-sys-dim">HOST: WINDOWS_11_CONTAINER_RUNTIME</span>
-        </div>
-
-        <pre class="bg-black/80 p-4 rounded border border-sys-border text-[11px] sm:text-xs text-sys-text overflow-x-auto leading-relaxed">
-                             [ PUBLIC INGRESS: INTERNET ]
-                                           │
-                   ┌───────────────────────┴───────────────────────┐
-                   ▼                                               ▼
-         [ play.boroghor.com ]                           [ play.boroghor.com ]
-      (TCP Java SRV -> bore.pub:43991)                 (UDP Bedrock -> ply.gg:18629)
-                   │                                               │
-                   ▼                                               ▼
-           [ bore-tunnel ]                                    [ playit ]
-     Rust TCP Reverse Proxy Container                 Direct Tunnel Node Container
-                   │                                               │
-                   └───────────────────────┬───────────────────────┘
-                                           │ (Host bridge network)
-                                           ▼
-                               [ boro-minecraft CONTAINER ]
-                           Engine: PaperMC 1.21.4 (Build #227)
-                           ├─ GeyserMC: Bedrock Protocol Translation
-                           ├─ Floodgate: Auth Decoupling
-                           ├─ ViaVersion / ViaBackwards: Client Compatibility
-                           └─ CoreProtect: Sub-tick SQLite Event Logging
-                                           ▲
-                                           │ (RCON Localhost:25575)
-                                           ▼
-                                 [ boro-bridge CONTAINER ]
-                           Autonomous Python 3.12 Protocol Bridge
-                           ├─ Tail: /data/logs/latest.log
-                           ├─ Proximity Detector: Gauntlet Completion (Hall III)
-                           ├─ Zero-LLM Rule Engine: Chat Commands (!wild, !estate)
-                           └─ Async Queue: /data/logs/operator_inbox.json
-        </pre>
-      </div>
-    </div>
-
-    <!-- PANEL 2: STATE MACHINE -->
-    <div id="tab-statemachine" class="tab-pane hidden space-y-6">
-      <div class="telemetry-grid p-6 rounded-lg space-y-4">
-        <div class="border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
-          &gt; SURVIVAL_VERIFICATION_STATE_MACHINE
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-sys-sub p-4 rounded border border-sys-border">
-            <div class="text-[10px] text-sys-dim">STATE 00 // ADVENTURE</div>
-            <div class="font-bold text-white text-sm mt-1">THE BORO GAUNTLET</div>
-            <div class="text-xs text-sys-dim mt-2">Coords: [-200, 181, -200]</div>
-            <p class="text-xs text-sys-text mt-2 leading-relaxed">
-              New connections spawn in Adventure mode with trial gear. Required to conquer Hall I (Ember Abyss parkour) and Hall II (Sentinel of the Shell) to prevent griefing.
-            </p>
-          </div>
-
-          <div class="bg-sys-sub p-4 rounded border border-sys-cyan/40">
-            <div class="text-[10px] text-sys-cyan">TRANSITION // DAIS TRIGGER</div>
-            <div class="font-bold text-white text-sm mt-1">ALTAR OF THE SHELL</div>
-            <div class="text-xs text-sys-dim mt-2">Coords: [-201, 183, -143]</div>
-            <p class="text-xs text-sys-text mt-2 leading-relaxed">
-              Stepping onto the obsidian altar triggers celestial lightning, server-wide broadcast, Survivor Starter Kit issuance (16 bread, stone tools, water bucket), and state promotion to Survival.
-            </p>
-          </div>
-
-          <div class="bg-sys-sub p-4 rounded border border-sys-green/40">
-            <div class="text-[10px] text-sys-green">STATE 01 // SURVIVAL</div>
-            <div class="font-bold text-white text-sm mt-1">THE WILD FRONTIER</div>
-            <div class="text-xs text-sys-dim mt-2">Spreadplayers: 750..2,000 blocks</div>
-            <p class="text-xs text-sys-text mt-2 leading-relaxed">
-              Unrestricted survival wilderness. Mine, farm, quarry, claim, build. Survivors can execute <code class="text-sys-cyan">!estate</code> to visit the trading hub anytime, and <code class="text-sys-green">!wild</code> to return.
-            </p>
-          </div>
+          <table class="spec-table">
+            <tr>
+              <th>TUNNEL_ROUTE</th>
+              <td><code>play.boroghor.com:18629</code> &rarr; <code>signaling-ala.tun.ply.gg:18629</code> &rarr; <code>:19132/udp</code></td>
+            </tr>
+            <tr>
+              <th>DIRECT_FALLBACK</th>
+              <td>
+                <code>signaling-ala.tun.ply.gg:18629</code>
+                <button class="btn-copy" style="padding:1px 6px;margin-left:8px;" onclick="copyText('signaling-ala.tun.ply.gg:18629', this)">COPY</button>
+              </td>
+            </tr>
+            <tr>
+              <th>CLIENT_COMPAT</th>
+              <td>Windows 10/11, iOS, Android, Consoles (Floodgate auth; no Java account required)</td>
+            </tr>
+          </table>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- PANEL 3: ESTATE COHESION -->
-    <div id="tab-estate" class="tab-pane hidden space-y-6">
-      <div class="telemetry-grid p-6 rounded-lg space-y-4">
-        <div class="border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
-          &gt; ALPINE_SOVEREIGN_ESTATE // MASTER_ARCHITECTURE
-        </div>
-        
-        <p class="text-xs text-sys-text">
-          Grounded to terrain coordinates <code class="text-sys-cyan">[-296..-221, Y=59..98, -375..-321]</code>. Built under human architectural harmony (walkable stairs with 3-block clear headroom, continuous weatherproof roofs, grounded stone foundations, zero floating clanker boxes):
-        </p>
+    <!-- 02 // CONTAINER TOPOLOGY & IPC -->
+    <section id="sec-topology">
+      <div class="sec-head">
+        <span class="title">02 // CONTAINER_TOPOLOGY_AND_IPC</span>
+        <span class="meta">STACK: Projects/minecraft-server/docker-compose.yml</span>
+      </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-          <div class="bg-sys-sub p-4 rounded border border-sys-border space-y-2">
-            <div class="font-bold text-white text-sm flex items-center justify-between">
-              <span>ALPINE CHALET COMPLEX</span>
-              <span class="text-sys-green">WEATHERPROOF 100%</span>
-            </div>
-            <ul class="space-y-1.5 text-sys-dim">
-              <li>• <span class="text-white">Pitched A-Frame Roof (Y=88..95):</span> Solid spruce plank backing, gable glass walls, cathedral skylight spine.</li>
-              <li>• <span class="text-white">Active Hearth Chimneys (Y=96):</span> Contained campfire smoke flues above West Hearth &amp; East Kitchen.</li>
-              <li>• <span class="text-white">Central Promenade (Y=80..82):</span> Clear 3-block artery from Grand Foyer to West Inglenook Fireplace.</li>
-              <li>• <span class="text-white">Hearth Kitchen &amp; Larder (Y=80):</span> Polished granite floor, smokers, blast furnace, preparation island.</li>
-              <li>• <span class="text-white">Alexandrian Library (Y=80..86):</span> Two-story scriptorium, study desk, cartography bench, chiseled archives.</li>
-              <li>• <span class="text-white">Penthouse &amp; Starlight Loft (Y=84..95):</span> King canopy bed, enchanting table, mezzanine observatory.</li>
-            </ul>
+      <pre class="schematic">
++----------------------------------------------------------------------------------------------------------------------+
+|                                            PUBLIC INTERNET / CLOUDFLARE DNS                                          |
++----------------------------------------------------------------------------------------------------------------------+
+               |                                                    |                                      |
+               | HTTPS (443)                                        | TCP (_minecraft._tcp SRV)            | UDP (18629)
+               v                                                    v                                      v
+   [ realm.boroghor.com ]                               [ play.boroghor.com ]                  [ play.boroghor.com:18629 ]
+               |                                                    |                                      |
+               v                                                    v                                      v
+   [ Cloudflare Argo Tunnel ]                             [ bore.pub:43991 ]                [ signaling-ala.tun.ply.gg:18629 ]
+               |                                                    |                                      |
+===============|====================================================|======================================|============
+HOST_BOUNDARY  | (:8767 -> :80)                                     | (Bore TCP Tunnel)                    | (Playit Agent)
+               v                                                    v                                      v
+      +------------------+                                 +------------------+                            |
+      |     boro-web     |                                 |   boro-tunnel    |                            |
+      |   nginx:alpine   |                                 |   alpine:3.20    |                            |
+      +------------------+                                 +------------------+                            |
+                                                                    | (mc-crossplay:25565)                 | (:19132/udp)
+                                                                    +------------------+-------------------+
+                                                                                       |
+                                                                                       v
+                                                                   +---------------------------------------+
+                                                                   |            boro-minecraft             |
+                                                                   |     itzg/minecraft-server:latest      |
+                                                                   |     TYPE=PAPER | VERSION=26.3 | 3G    |
+                                                                   |  Plugins: Geyser, Floodgate,          |
+                                                                   |           ViaVersion, CoreProtect     |
+                                                                   +---------------------------------------+
+                                                                               ^               |
+                                                     RCON (mc-crossplay:25575) |               | Shared Volume (/data)
+                                                                               |               v
+                                                                   +---------------------------------------+
+                                                                   |              boro-bridge              |
+                                                                   |          python:3.12-alpine           |
+                                                                   |  - Tails /data/logs/latest.log        |
+                                                                   |  - Enforces Estate/Gauntlet/Wild FSM  |
+                                                                   |  - Zero-LLM command parser            |
+                                                                   |  - Queues /data/logs/operator_inbox   |
+                                                                   +---------------------------------------+
+      </pre>
+
+      <div class="table-wrap">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>CONTAINER_NAME</th>
+              <th>IMAGE</th>
+              <th>INTERNAL_PORTS</th>
+              <th>VOLUMES</th>
+              <th>PROCESS_SPECIFICATION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>boro-minecraft</code></td>
+              <td><code>itzg/minecraft-server:latest</code></td>
+              <td><code>25565/tcp</code>, <code>19132/udp</code>, <code>25575/tcp</code></td>
+              <td><code>./data:/data</code></td>
+              <td>PaperMC 26.3, Aikar GC flags, <code>MODE=adventure</code>, <code>OPS=steveXBT</code>, <code>ONLINE_MODE=false</code>.</td>
+            </tr>
+            <tr>
+              <td><code>boro-tunnel</code></td>
+              <td><code>alpine:3.20</code></td>
+              <td>Egress &rarr; <code>bore.pub:43991</code></td>
+              <td><code>./data/bore:/usr/local/bin/bore:ro</code></td>
+              <td><code>bore local 25565 --local-host mc-crossplay --to bore.pub --port 43991</code> (auto-retry loop).</td>
+            </tr>
+            <tr>
+              <td><code>boro-bridge</code></td>
+              <td><code>python:3.12-alpine</code></td>
+              <td>Egress &rarr; <code>mc-crossplay:25575</code></td>
+              <td><code>./data:/data</code>, <code>./bridge:/app:ro</code></td>
+              <td><code>python /app/bridge.py</code> — persistent RCON client, 1Hz Gauntlet tick, byte-offset log tailer.</td>
+            </tr>
+            <tr>
+              <td><code>boro-web</code></td>
+              <td><code>nginx:alpine</code></td>
+              <td><code>8767:80/tcp</code></td>
+              <td><code>../boro-realm:/usr/share/nginx/html:ro</code></td>
+              <td>Static specification server proxied by Cloudflare Tunnel to <code>https://realm.boroghor.com</code>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 03 // BRIDGE STATE MACHINE & COMMANDS -->
+    <section id="sec-fsm">
+      <div class="sec-head">
+        <span class="title">03 // BRIDGE_STATE_MACHINE_AND_IPC_COMMANDS</span>
+        <span class="meta">SOURCE: Projects/minecraft-server/bridge/bridge.py</span>
+      </div>
+
+      <div class="grid-4">
+        <div class="cell">
+          <div class="cell-title"><span>ACL_CLASS_01</span><span class="tag tag-amber">OPERATOR</span></div>
+          <div style="font-weight:700;color:var(--fg-0);margin-bottom:6px;">Sovereign Operators</div>
+          <div style="color:var(--fg-1);font-size:11px;">
+            Handles: <code>steveXBT</code> (Java), <code>.rohG_oroB</code> / <code>rohG_oroB</code> (Bedrock).<br>
+            Login Mode: <code>survival</code>.<br>
+            IPC Relay: Any non-command chat line is appended to <code>/data/logs/operator_inbox.json</code> with <code>"processed": false</code> for cyclic execution by Antigravity.
           </div>
-
-          <div class="bg-sys-sub p-4 rounded border border-sys-border space-y-2">
-            <div class="font-bold text-white text-sm flex items-center justify-between">
-              <span>SUBTERRANEAN &amp; ARTERIAL ROADS</span>
-              <span class="text-sys-green">WALKABLE 100%</span>
-            </div>
-            <ul class="space-y-1.5 text-sys-dim">
-              <li>• <span class="text-white">Level 1 Wine Cellar (Y=74):</span> Oak aging barrels, sommelier tasting counter, fermentation stand.</li>
-              <li>• <span class="text-white">Level 2 Thermal Spa (Y=68):</span> Geothermal iron-grated steam vent, quartz deck, hot pool, relaxation recliners.</li>
-              <li>• <span class="text-white">Level 3 Pioneers Crypt (Y=59):</span> Ancestral sarcophagus, soul fire, relic pots, continuous deepslate stair.</li>
-              <li>• <span class="text-white">Grand East Avenue (X=-276..-242):</span> Stepped stone road through fortified Mountain Gate battlements.</li>
-              <li>• <span class="text-white">North Marina Promenade (Z=-349..-375):</span> Pier-supported lake bridge, boardwalk, harbor fishing gazebo.</li>
-              <li>• <span class="text-white">South Stables &amp; Railhead (Z=-345..-321):</span> Continuous cobbled road to stables, blacksmith forge, and mine rail.</li>
-            </ul>
+        </div>
+        <div class="cell">
+          <div class="cell-title"><span>ACL_CLASS_02</span><span class="tag tag-cyan">GUEST_HUB</span></div>
+          <div style="font-weight:700;color:var(--fg-0);margin-bottom:6px;">First-Join Wanderer</div>
+          <div style="color:var(--fg-1);font-size:11px;">
+            Spawn Target: <code>[-282.0, 81.0, -348.0]</code> (Alpine Chalet Grand Foyer).<br>
+            Login Mode: <code>adventure</code> (100% grief-safe).<br>
+            Provisioning: Issued <code>16x minecraft:cooked_beef</code> upon arrival. Can tour all estate landmarks &amp; trade with 63 villagers.
+          </div>
+        </div>
+        <div class="cell">
+          <div class="cell-title"><span>ACL_CLASS_03</span><span class="tag tag-amber">GAUNTLET_TRIAL</span></div>
+          <div style="font-weight:700;color:var(--fg-0);margin-bottom:6px;">Verification Trial (!gauntlet)</div>
+          <div style="color:var(--fg-1);font-size:11px;">
+            Warp Target: <code>[-200.0, 181.0, -200.0]</code> in <code>adventure</code> mode with <code>stone_sword</code> + <code>shield</code>.<br>
+            Hall I: Pit sensor at <code>Y=175..178</code> resets falls.<br>
+            Hall II: Summons <code>Sentinel of the Shell</code> at <code>[-200, 181, -161]</code>.<br>
+            Hall III: Altar trigger at <code>[-201..2, 183..3, -143..2]</code>.
+          </div>
+        </div>
+        <div class="cell">
+          <div class="cell-title"><span>ACL_CLASS_04</span><span class="tag tag-pass">VERIFIED_SURVIVOR</span></div>
+          <div style="font-weight:700;color:var(--fg-0);margin-bottom:6px;">Wild Frontier (!wild)</div>
+          <div style="color:var(--fg-1);font-size:11px;">
+            Registry: Persisted in <code>/data/logs/survivors.json</code> upon touching Hall III Altar.<br>
+            Kit: <code>16x bread</code>, <code>stone_pickaxe</code>, <code>stone_axe</code>, <code>16x torch</code>, <code>water_bucket</code>.<br>
+            Dispatch: <code>gamemode survival</code> + <code>spreadplayers -283 -350 750 2000 false</code>.
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- PANEL 4: BRIDGE API -->
-    <div id="tab-bridge" class="tab-pane hidden space-y-6">
-      <div class="telemetry-grid p-6 rounded-lg space-y-4">
-        <div class="border-b border-sys-border pb-2 text-xs font-bold text-sys-cyan uppercase">
-          &gt; IN_GAME_CHAT_BRIDGE_COMMANDS
+      <div class="table-wrap">
+        <table class="spec-table">
+          <thead>
+            <tr>
+              <th>CHAT_TRIGGER</th>
+              <th>ACCEPTED_ALIASES</th>
+              <th>ACL_REQUIREMENT</th>
+              <th>TARGET_GAMEMODE</th>
+              <th>RCON_EXECUTION_SEQUENCE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>!estate</code></td>
+              <td><code>!spawn</code>, <code>!hub</code>, <code>!back</code>, <code>!home</code></td>
+              <td><code>ANY</code></td>
+              <td><code>adventure</code> (Guest) / <code>survival</code> (OP)</td>
+              <td><code>tp &lt;p&gt; -282.0 81.0 -348.0 180.0 0.0</code> &rarr; <code>playsound entity.enderman.teleport</code></td>
+            </tr>
+            <tr>
+              <td><code>!gauntlet</code></td>
+              <td><code>!jq</code>, <code>!trial</code></td>
+              <td><code>ANY</code></td>
+              <td><code>adventure</code></td>
+              <td><code>tp &lt;p&gt; -200 181 -200 0 0</code> &rarr; <code>clear/give stone_sword 1, shield 1</code></td>
+            </tr>
+            <tr>
+              <td><code>!wild</code></td>
+              <td><code>!frontier</code>, <code>!survival</code>, <code>!rtp</code></td>
+              <td><code>is_survivor(p) || PROTECTED</code></td>
+              <td><code>survival</code></td>
+              <td><code>gamemode survival &lt;p&gt;</code> &rarr; <code>spreadplayers -283 -350 750 2000 false &lt;p&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>!wiki</code></td>
+              <td><code>!repo</code>, <code>!github</code>, <code>!guide</code>, <code>!site</code>, <code>!web</code></td>
+              <td><code>ANY</code></td>
+              <td><code>UNCHANGED</code></td>
+              <td><code>tellraw &lt;p&gt;</code> clickable JSON <code>open_url</code> &rarr; <code>https://realm.boroghor.com</code></td>
+            </tr>
+            <tr>
+              <td><code>!help</code></td>
+              <td><code>!commands</code>, <code>!cmd</code>, <code>?</code>, <code>help</code></td>
+              <td><code>ANY</code></td>
+              <td><code>UNCHANGED</code></td>
+              <td><code>tellraw &lt;p&gt;</code> formatted command table</td>
+            </tr>
+            <tr>
+              <td><code>!ping</code></td>
+              <td><code>ping</code>, <code>test</code>, <code>you there?</code></td>
+              <td><code>ANY</code></td>
+              <td><code>UNCHANGED</code></td>
+              <td><code>tellraw &lt;p&gt; "[BORO AI] Online and listening! Type !help for commands."</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 04 // VOXEL ARCHITECTURE & ARTERIAL GRAPH -->
+    <section id="sec-voxel">
+      <div class="sec-head">
+        <span class="title">04 // VOXEL_ARCHITECTURE_AND_ARTERIAL_GRAPH</span>
+        <span class="meta">ORIGIN: [-282, 81, -348] | CLANKER_PLATFORMS: 0 (PURGED)</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="cell">
+          <div class="cell-title">
+            <span>VERTICAL_SECTION // MAIN_ALPINE_CHALET</span>
+            <span class="tag tag-pass">6_LEVELS_CONNECTED</span>
+          </div>
+          <pre class="schematic" style="border:1px solid var(--line);margin-bottom:0;">
+ELEVATION (Y)   STRUCTURAL_LAYER &amp; VERTICAL_CIRCULATION
+--------------------------------------------------------------------------------
+Y = 95..97      [ROOF_CROWN] Tinted-glass cathedral spine (Z=-347, Y=95)
+                + West/East Stone-Brick Chimney Stacks (-293/-283, 96, -344)
+Y = 88..94      [3F_STARLIGHT_LOFT] Mezzanine deck (X=-294..-289, Z=-349..-345)
+                Cartography Table, Star Lectern, Amethyst Cluster, West Gable
+                    ^
+                    |  [Stair: South Penthouse Flight (X=-285..-288, Z=-342)]
+Y = 84..87      [2F_PENTHOUSE_SUITE] Full spruce slab (X=-295..-280, Z=-352..-342)
+                King Bed (-294,85,-348), Enchanting Table (-284,85,-350),
+                SE Lounge, East Sunrise Balcony &amp; Pergola (X=-278..-276, Y=84..88)
+                    ^
+                    |  [Stair: North Chalet Flight (X=-285..-282, Z=-351, Y=81..84)]
+Y = 80..83      [1F_GREAT_HALL] Grand Foyer (-282,81,-348), Welcome Console,
+                Central Promenade (Z=-347..-346), West Inglenook Hearth (-294,80,-347),
+                South Granite Kitchen (Z=-344..-340), North Library (Z=-358..-353)
+                    |
+                    v  [Stair: South Deepslate Flight (X=-287..-282, Z=-343, Y=80..75)]
+Y = 74..77      [B1_WINE_CELLAR] Vintage Cask Racks, Sommelier Counter, Brewing Stand
+                    |
+                    v  [Stair: North Subterranean Flight (X=-282..-287, Z=-351, Y=74..69)]
+Y = 68..71      [B2_THERMAL_SPA] Hot Spring Pool (-284,67,-347), Quartz Deck, Steam Vent
+                    |
+                    v  [Stair: West Crypt Flight (X=-289, Z=-349..-341, Y=68..59)]
+Y = 59..63      [B3_PIONEERS_CRYPT] Ancestral Cenotaph (-286,60,-347), Soul Fire, Tomes
+          </pre>
         </div>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs font-mono border-collapse">
+        <div class="cell">
+          <div class="cell-title">
+            <span>HORIZONTAL_ARTERIES // GROUNDED_ROAD_NETWORK</span>
+            <span class="tag tag-cyan">3_BLOCK_WIDTH_STD</span>
+          </div>
+          <table class="spec-table" style="border:1px solid var(--line);">
             <thead>
-              <tr class="border-b border-sys-border text-sys-dim bg-black/40">
-                <th class="p-3">COMMAND</th>
-                <th class="p-3">ALIASES</th>
-                <th class="p-3">TARGET_MODE</th>
-                <th class="p-3">EXECUTION_ROUTINE</th>
+              <tr>
+                <th>ARTERIAL_CORRIDOR</th>
+                <th>VECTOR_BOUNDS</th>
+                <th>TERMINUS_LANDMARKS</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-sys-border/60">
-              <tr class="hover:bg-sys-sub">
-                <td class="p-3 text-sys-cyan font-bold">!gauntlet</td>
-                <td class="p-3 text-sys-dim">!jq, !trial</td>
-                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-amber/10 text-sys-amber border border-sys-amber/30">Adventure</span></td>
-                <td class="p-3 text-sys-text">Teleport to Gauntlet gates [-200, 181, -200]; equip combat trial gear.</td>
+            <tbody>
+              <tr>
+                <td><strong>Grand East Avenue</strong></td>
+                <td><code>X=-276..-242</code><br><code>Z=-348..-346</code><br><code>Y=80..74</code></td>
+                <td>Front Timber Porch (<code>X=-278</code>) &rarr; Forecourt Gardens &rarr; Mountain Entry Gate Battlements (<code>X=-258</code>)</td>
               </tr>
-              <tr class="hover:bg-sys-sub">
-                <td class="p-3 text-sys-green font-bold">!wild</td>
-                <td class="p-3 text-sys-dim">!frontier, !rtp</td>
-                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-green/10 text-sys-green border border-sys-green/30">Survival</span></td>
-                <td class="p-3 text-sys-text">Execute spreadplayers 750..2000 blocks into wilderness; switch mode to Survival.</td>
+              <tr>
+                <td><strong>East Valley Causeway &amp; Pier</strong></td>
+                <td><code>X=-242..-221</code><br><code>Z=-348..-346</code><br><code>Y=74..64</code></td>
+                <td>Entry Gate Plaza &rarr; Stepped Stone Causeway &rarr; Lower Lake Timber Pier &amp; Mooring (<code>X=-221, Y=64</code>)</td>
               </tr>
-              <tr class="hover:bg-sys-sub">
-                <td class="p-3 text-sys-cyan font-bold">!estate</td>
-                <td class="p-3 text-sys-dim">!spawn, !hub, !home</td>
-                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-cyan/10 text-sys-cyan border border-sys-cyan/30">Adventure</span></td>
-                <td class="p-3 text-sys-text">Teleport to Grand Foyer [-282, 81, -348]; switch to grief-proof Adventure mode.</td>
+              <tr>
+                <td><strong>North Lakeside &amp; Marina</strong></td>
+                <td><code>X=-275..-267</code><br><code>Z=-349..-375</code><br><code>Y=78..74..78</code></td>
+                <td>East Avenue Junction &rarr; Marina Cobble Landing (<code>Z=-360</code>) &rarr; Harbor Gazebo &rarr; Pier Bridge &rarr; North Bank</td>
               </tr>
-              <tr class="hover:bg-sys-sub">
-                <td class="p-3 text-white font-bold">!wiki</td>
-                <td class="p-3 text-sys-dim">!repo, !guide</td>
-                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-sub text-sys-dim border border-sys-border">Any</span></td>
-                <td class="p-3 text-sys-text">Send clickable web URL https://realm.boroghor.com to player chat.</td>
+              <tr>
+                <td><strong>Bazaar &amp; Barracks Branches</strong></td>
+                <td><code>X=-251..-248</code><br><code>Z=-356..-336</code><br><code>Y=74</code></td>
+                <td>North branch to Open-Air Bazaar Canopy &amp; Watermill; South branch to Sentry Post, Kennels &amp; Barracks</td>
               </tr>
-              <tr class="hover:bg-sys-sub">
-                <td class="p-3 text-white font-bold">!help</td>
-                <td class="p-3 text-sys-dim">!cmd, ?</td>
-                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-sub text-sys-dim border border-sys-border">Any</span></td>
-                <td class="p-3 text-sys-text">Print formatted command palette directly into player chat console.</td>
+              <tr>
+                <td><strong>SW Stables, Forge &amp; Railhead</strong></td>
+                <td><code>X=-275..-305</code><br><code>Z=-345..-321</code><br><code>Y=79..73</code></td>
+                <td>South Porch &amp; Kitchen Stairs &rarr; Royal Stables (<code>-290,-336</code>) &rarr; Blacksmith Forge (<code>-296,-331</code>) &rarr; Mine Railhead &amp; Apiary</td>
               </tr>
-              <tr class="hover:bg-sys-sub">
-                <td class="p-3 text-white font-bold">!ping</td>
-                <td class="p-3 text-sys-dim">ping, test</td>
-                <td class="p-3"><span class="px-1.5 py-0.5 rounded bg-sys-sub text-sys-dim border border-sys-border">Any</span></td>
-                <td class="p-3 text-sys-text">Verify bridge daemon socket latency and RCON responsiveness.</td>
+              <tr>
+                <td><strong>West Peak Aerodrome Trail</strong></td>
+                <td><code>X=-301..-298</code><br><code>Z=-355..-343</code><br><code>Y=83..98</code></td>
+                <td>West Library Terrace &rarr; Switchback Stairs &rarr; Mid-Mountain Ledge (<code>Y=88</code>) &rarr; Summit Aerodrome Arch (<code>Y=94..98</code>)</td>
               </tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- PANEL 5: AUDIT INVARIANTS -->
-    <div id="tab-audit" class="tab-pane hidden space-y-6">
-      <div class="telemetry-grid p-6 rounded-lg space-y-4">
-        <div class="flex items-center justify-between border-b border-sys-border pb-2 text-xs font-bold text-sys-green uppercase">
-          <span>&gt; MASTER_COHESION_AUDIT // 45_POINT_TELEMETRY</span>
-          <span>STATUS: ALL_PASS</span>
+    <!-- 05 // 45-POINT LIVE AUDIT INVARIANTS -->
+    <section id="sec-audit">
+      <div class="sec-head">
+        <span class="title">05 // STRUCTURAL_COHESION_AUDIT_INVARIANTS (45/45)</span>
+        <span class="meta">VERIFIER: master_50_phase_audit.py</span>
+      </div>
+
+      <div class="filter-bar">
+        <div class="kv">
+          <span class="k">FILTER_INVARIANTS:</span>
+          <input type="text" id="audit-filter" class="filter-input" placeholder="Search by coordinate, block, roof, stair, road..." oninput="filterAudit()">
         </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-[11px]">
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Chalet Ground Floor (Y=80)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Penthouse Slab (Y=84)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] North Roof Slope (Y=91)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] South Roof Slope (Y=91)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Cathedral Skylight (Y=95)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] West Gable End Wall (X=-295)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] East Gable End Wall (X=-280)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Grand Front Doors (Y=81)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Promenade Headroom (Y=82)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Great Hall Campfire (X=-294)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Penthouse Bed (X=-294)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Enchanting Table (X=-284)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Penthouse Balcony Doors</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Sunrise Balcony Deck</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] North Penthouse Stair Flight</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Starlight Loft Stair Flight</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] South Cellar Stair Flight</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Subterranean Crypt Stair Flight</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Grand East Avenue Road</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Mountain Entry Gate Road</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] North Lakeside Stairway</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Marina Landing &amp; Boardwalk</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] South Stables &amp; Forge Road</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] West Road steveXBT Ext</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] East Valley Causeway &amp; Pier</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Thermal Spa Pool (Y=67)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Master Forge Shroomlight</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Library Chiseled Shelf</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Cats (Katie &amp; Macey)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Horses (Zephyr &amp; Shadowfax)</div>
-          <div class="p-2 bg-sys-sub rounded border border-sys-green/30 text-sys-green">[PASS] Wolves (Fenrir &amp; Garm)</div>
+        <div class="kv">
+          <span class="k">SHOWING:</span>
+          <span class="v cyan" id="audit-count">45 / 45</span>
         </div>
       </div>
-    </div>
 
-  </main>
-
-  <!-- Technical Footer -->
-  <footer class="border-t border-sys-border py-6 bg-black text-center text-xs text-sys-dim">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div>BORO_REALM // AUTONOMOUS_CLUSTER_ENGINE // v26.4</div>
-      <div class="flex items-center space-x-4">
-        <span>GATEWAY: play.boroghor.com</span>
-        <span>DAEMON: boro-bridge</span>
-        <span>VERIFIED: 100%</span>
+      <div class="table-wrap">
+        <table class="spec-table" id="audit-table">
+          <thead>
+            <tr>
+              <th style="width:60px;">ID</th>
+              <th style="width:150px;">SUBSYSTEM</th>
+              <th>INVARIANT_LABEL</th>
+              <th>RCON_VERIFICATION_PREDICATE</th>
+              <th style="width:90px;">STATE</th>
+            </tr>
+          </thead>
+          <tbody id="audit-tbody">
+            <!-- Populated by inline script below for zero-redundancy & instant filtering -->
+          </tbody>
+        </table>
       </div>
-    </div>
-  </footer>
+    </section>
+
+    <footer class="footer">
+      <div>BORO_REALM // TECHNICAL_SPECIFICATION_AND_TELEMETRY // PAPER_26.3</div>
+      <div>HOST: play.boroghor.com | WEB: realm.boroghor.com | MAINTAINER: ANTIGRAVITY_STEWARD</div>
+    </footer>
+
+  </div>
 
   <script>
-    function setTab(tabId) {
-      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
-      document.getElementById('tab-' + tabId).classList.remove('hidden');
+    const AUDIT_CHECKS = [
+      ["INV-01", "CHALET_ENVELOPE", "Chalet Ground Floor Center (Y=80)", "execute if block -288 80 -347 spruce_planks"],
+      ["INV-02", "CHALET_ENVELOPE", "Chalet Ground Floor East Foyer (Y=80)", "execute if block -282 80 -347 spruce_planks"],
+      ["INV-03", "CHALET_ENVELOPE", "Chalet 2nd Floor Penthouse Slab (Y=84)", "execute if block -288 84 -347 spruce_planks"],
+      ["INV-04", "ROOF_WEATHERPROOF", "Chalet Roof North Slope Weatherproof (Y=91)", "execute if block -286 91 -351 spruce_stairs"],
+      ["INV-05", "ROOF_WEATHERPROOF", "Chalet Roof South Slope Weatherproof (Y=91)", "execute if block -286 91 -343 spruce_stairs"],
+      ["INV-06", "ROOF_WEATHERPROOF", "Chalet Roof Cathedral Skylight Spine (Y=95)", "execute if block -286 95 -347 tinted_glass"],
+      ["INV-07", "ROOF_WEATHERPROOF", "Chalet West Gable End Wall (X=-295, Y=91)", "execute if block -295 91 -347 glass_pane"],
+      ["INV-08", "ROOF_WEATHERPROOF", "Chalet East Gable End Wall (X=-280, Y=91)", "execute if block -280 91 -347 glass_pane"],
+      ["INV-09", "INTERIOR_CIRC", "Grand Front Double Doors (X=-280, Y=81)", "execute if block -280 81 -347 spruce_door"],
+      ["INV-10", "INTERIOR_CIRC", "Great Hall Central Promenade Clear (Y=82)", "execute if block -285 82 -347 air"],
+      ["INV-11", "INTERIOR_CIRC", "Great Hall Hearth Campfire (X=-294, Y=80)", "execute if block -294 80 -347 campfire"],
+      ["INV-12", "INTERIOR_CIRC", "Penthouse King Canopy Bed (X=-294, Y=85)", "execute if block -294 85 -348 red_bed"],
+      ["INV-13", "INTERIOR_CIRC", "Penthouse Enchanting Table (X=-284, Y=85)", "execute if block -284 85 -350 enchanting_table"],
+      ["INV-14", "INTERIOR_CIRC", "Penthouse Balcony Double Doors (X=-280, Y=85)", "execute if block -280 85 -346 spruce_door"],
+      ["INV-15", "INTERIOR_CIRC", "Sunrise Balcony Deck (X=-278, Y=84)", "execute if block -278 84 -347 spruce_planks"],
+      ["INV-16", "VERTICAL_STAIRS", "North Staircase to Penthouse Step 1 (Y=81)", "execute if block -285 81 -351 spruce_stairs"],
+      ["INV-17", "VERTICAL_STAIRS", "North Staircase to Penthouse Step 4 (Y=84)", "execute if block -282 84 -351 spruce_stairs"],
+      ["INV-18", "VERTICAL_STAIRS", "North Staircase Headroom Clear (Y=85)", "execute if block -284 85 -351 air"],
+      ["INV-19", "VERTICAL_STAIRS", "Starlight Loft Staircase Step 1 (X=-285, Y=85, Z=-342)", "execute if block -285 85 -342 spruce_stairs"],
+      ["INV-20", "VERTICAL_STAIRS", "Starlight Loft Mezzanine Deck (X=-291, Y=88, Z=-347)", "execute if block -291 88 -347 spruce_planks"],
+      ["INV-21", "VERTICAL_STAIRS", "Starlight Loft Cartography Table (X=-294, Y=89, Z=-348)", "execute if block -294 89 -348 cartography_table"],
+      ["INV-22", "VERTICAL_STAIRS", "South Staircase to Basement Step 1 (Y=80)", "execute if block -287 80 -343 polished_deepslate_stairs"],
+      ["INV-23", "VERTICAL_STAIRS", "South Staircase to Basement Step 4 (Y=77)", "execute if block -284 77 -343 polished_deepslate_stairs"],
+      ["INV-24", "VERTICAL_STAIRS", "South Staircase to Basement Step 6 (Y=75)", "execute if block -282 75 -343 polished_deepslate_stairs"],
+      ["INV-25", "VERTICAL_STAIRS", "South Staircase Entry Headroom Clear (Y=81)", "execute if block -288 81 -343 air"],
+      ["INV-26", "ARTERIAL_ROADS", "Front Timber Porch Deck (X=-278, Y=80)", "execute if block -278 80 -347 spruce_planks"],
+      ["INV-27", "ARTERIAL_ROADS", "Front Porch Clear Headroom (X=-278, Y=81)", "execute if block -278 81 -347 air"],
+      ["INV-28", "ARTERIAL_ROADS", "Grand East Avenue Upper Stair (X=-276, Y=80)", "execute if block -276 80 -347 stone_brick_stairs"],
+      ["INV-29", "ARTERIAL_ROADS", "Grand East Avenue Mid Landing (X=-271, Y=78)", "execute if block -271 78 -347 cobblestone"],
+      ["INV-30", "ARTERIAL_ROADS", "Grand East Avenue Lower Stair (X=-261, Y=75)", "execute if block -261 75 -347 stone_brick_stairs"],
+      ["INV-31", "ARTERIAL_ROADS", "Grand Mountain Entry Gate Road (X=-258, Y=74)", "execute if block -258 74 -347 cobblestone"],
+      ["INV-32", "ARTERIAL_ROADS", "Grand Entry Gate Arch Headroom (X=-258, Y=76)", "execute if block -258 76 -347 air"],
+      ["INV-33", "ARTERIAL_ROADS", "North Lakeside Stairway (X=-272, Y=76, Z=-355)", "execute if block -272 76 -355 cobblestone"],
+      ["INV-34", "ARTERIAL_ROADS", "North Lakeside Marina Landing (X=-272, Y=74, Z=-360)", "execute if block -272 74 -360 cobblestone"],
+      ["INV-35", "ARTERIAL_ROADS", "South-West Stables & Forge Road (X=-284, Y=74, Z=-334)", "execute if block -284 74 -334 cobblestone"],
+      ["INV-36", "ARTERIAL_ROADS", "West Road Extension at steveXBT Login (X=-303, Y=73, Z=-334)", "execute if block -303 73 -334 stone_bricks"],
+      ["INV-37", "VERTICAL_STAIRS", "Subterranean Crypt Staircase Step (X=-289, Y=64, Z=-345)", "execute if block -289 64 -345 polished_deepslate_stairs"],
+      ["INV-38", "ARTERIAL_ROADS", "East Valley Causeway Lower Landing (X=-231, Y=64, Z=-347)", "execute if block -231 64 -347 stone_bricks"],
+      ["INV-39", "ESTATE_LANDMARK", "Subterranean Thermal Spa Pool", "execute if block -284 67 -347 water"],
+      ["INV-40", "ESTATE_LANDMARK", "Royal Alpine Stables Trough", "execute if block -290 74 -336 water_cauldron"],
+      ["INV-41", "ESTATE_LANDMARK", "Master Forge Safe Shroomlight Core", "execute if block -296 75 -331 shroomlight"],
+      ["INV-42", "ESTATE_LANDMARK", "Alexandrian Library Chiseled Shelf", "execute if block -292 86 -358 chiseled_bookshelf"],
+      ["INV-43", "ENTITY_REGISTRY", "Cats (Katie & Macey)", "execute if entity @e[type=cat,nbt={Invulnerable:1b}]"],
+      ["INV-44", "ENTITY_REGISTRY", "Horses (Zephyr & Shadowfax)", "execute if entity @e[type=horse,nbt={Invulnerable:1b}]"],
+      ["INV-45", "ENTITY_REGISTRY", "Guard Wolves (Fenrir & Garm)", "execute if entity @e[type=wolf,nbt={Invulnerable:1b}]"]
+    ];
 
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('border-sys-cyan', 'bg-sys-cyan/10', 'text-sys-cyan', 'font-semibold');
-        btn.classList.add('border-sys-border', 'bg-sys-panel', 'text-sys-dim');
-      });
-      const active = document.getElementById('btn-' + tabId);
-      if (active) {
-        active.classList.remove('border-sys-border', 'bg-sys-panel', 'text-sys-dim');
-        active.classList.add('border-sys-cyan', 'bg-sys-cyan/10', 'text-sys-cyan', 'font-semibold');
+    function renderAudit(rows) {
+      const tbody = document.getElementById('audit-tbody');
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td style="color:var(--fg-2);font-weight:600;">${r[0]}</td>
+          <td><span class="tag tag-cyan">${r[1]}</span></td>
+          <td style="color:var(--fg-0);font-weight:500;">${r[2]}</td>
+          <td><code style="color:var(--fg-1);">${r[3]}</code></td>
+          <td><span class="tag tag-pass">PASS</span></td>
+        </tr>
+      `).join('');
+      document.getElementById('audit-count').textContent = `${rows.length} / ${AUDIT_CHECKS.length}`;
+    }
+
+    function filterAudit() {
+      const q = document.getElementById('audit-filter').value.trim().toLowerCase();
+      if (!q) {
+        renderAudit(AUDIT_CHECKS);
+        return;
       }
+      const filtered = AUDIT_CHECKS.filter(r =>
+        r[0].toLowerCase().includes(q) ||
+        r[1].toLowerCase().includes(q) ||
+        r[2].toLowerCase().includes(q) ||
+        r[3].toLowerCase().includes(q)
+      );
+      renderAudit(filtered);
     }
 
-    function copy(text, btn) {
-      navigator.clipboard.writeText(text).then(() => {
-        const old = btn.textContent;
-        btn.textContent = 'OK';
-        btn.classList.add('bg-sys-green/20', 'text-sys-green', 'border-sys-green');
+    function copyText(txt, btn) {
+      navigator.clipboard.writeText(txt).then(() => {
+        const prev = btn.textContent;
+        btn.textContent = 'COPIED';
+        btn.classList.add('copied');
         setTimeout(() => {
-          btn.textContent = old;
-          btn.classList.remove('bg-sys-green/20', 'text-sys-green', 'border-sys-green');
-        }, 1500);
+          btn.textContent = prev;
+          btn.classList.remove('copied');
+        }, 1200);
       });
     }
+
+    function scrollToSec(id, btn) {
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('utc-clock').textContent = now.toISOString().replace('T', ' ').substring(0, 19) + 'Z';
+    }
+
+    renderAudit(AUDIT_CHECKS);
+    updateClock();
+    setInterval(updateClock, 1000);
   </script>
 </body>
 </html>

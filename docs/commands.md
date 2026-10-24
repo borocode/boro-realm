@@ -1,66 +1,89 @@
-# 📜 In-Game Commands Reference
+# DOC_02 // BRIDGE_IPC_AND_CHAT_COMMANDS
 
-The Boro Realm server runs a persistent bridge daemon that processes chat commands in real-time through RCON without requiring client-side mods or permission plugins.
-
----
-
-## ⚡ Player Commands
-
-### `!gauntlet`
-- **Aliases:** `!jq`, `!trial`
-- **Allowed Mode:** Any
-- **Destination:** `[-200.0, 181.0, -200.0]` (The Boro Gauntlet Antechamber)
-- **Gamemode on Warp:** `adventure`
-- **Inventory Action:** Clears old trial gear and grants `1x Stone Sword` and `1x Shield`.
-- **Purpose:** Warps the player to the beginning of the Verification Gauntlet. Players who fell into the pit or who wish to replay the parkour trial can use this at any time.
+```text
+MODULE      : BRIDGE_COMMAND_ENGINE
+SOURCE_FILE : Projects/minecraft-server/bridge/bridge.py
+LOG_SOURCE  : /data/logs/latest.log
+RCON_TARGET : mc-crossplay:25575
+```
 
 ---
 
-### `!wild`
-- **Aliases:** `!frontier`, `!rtp`, `!survival`
-- **Allowed Mode:** Verified Survivors & Server Operators
-- **Destination:** Random location `750` to `2000` blocks away from the Sovereign Estate center `[-283, -350]`.
-- **Gamemode on Warp:** `survival`
-- **Description:** Launches the player into the untamed Wild Frontier where terrain modification, mining, gathering, hunting, crafting, and base-building are completely enabled.
-- **Requirement:** Players who have not completed the Verification Gauntlet will receive an access denied message instructing them to run `!gauntlet`.
+## 1. COMMAND_DISPATCH_SPECIFICATION
 
----
+`bridge.py` parses every chat event matching:
+```python
+CHAT_RE = re.compile(r"\[Async Chat Thread[^\]]*\]/INFO\]: (?:\[Not Secure\] )?<([^>]+)> (.*)")
+```
 
-### `!estate`
+### 1.1 `!estate`
 - **Aliases:** `!spawn`, `!hub`, `!home`, `!back`
-- **Allowed Mode:** Any
-- **Destination:** `[-282.0, 81.0, -348.0]` (The Grand Foyer of the Sovereign Grand Chalet)
-- **Gamemode on Warp:** `adventure` (Non-OPs) / `survival` (OPs)
-- **Description:** Returns the player safely to the Alpine Sovereign Estate. In Adventure mode, players can freely explore all 50 phases and 60 enhancements, trade with the 63 immortal villagers, use crafting tables, enter the Nether Portal, or rest without risk of monster attacks or accidental griefing.
+- **Access Control:** `ANY`
+- **Target Coordinates:** `[-282.0, 81.0, -348.0, yaw=-90, pitch=0]` (Alpine Sovereign Estate Grand Foyer)
+- **RCON Execution:**
+  ```mcfunction
+  gamemode adventure <player>   # or 'gamemode survival <player>' if player in OPS
+  tp <player> -282 81 -348 -90 0
+  ```
 
----
+### 1.2 `!gauntlet`
+- **Aliases:** `!jq`, `!trial`
+- **Access Control:** `ANY`
+- **Target Coordinates:** `[-200.0, 181.0, -200.0, yaw=0, pitch=0]` (Gauntlet Entry Sanctuary)
+- **RCON Execution:**
+  ```mcfunction
+  gamemode adventure <player>
+  tp <player> -200 181 -200 0 0
+  clear <player>
+  give <player> minecraft:stone_sword 1
+  give <player> minecraft:shield 1
+  ```
 
-### `!wiki`
+### 1.3 `!wild`
+- **Aliases:** `!frontier`, `!rtp`, `!survival`
+- **Access Control:** `player in OPS or player in survivors.json`
+- **Target Coordinates:** Random surface coordinate `750..2000` blocks from `[-283, -350]`
+- **RCON Execution (Authorized):**
+  ```mcfunction
+  gamemode survival <player>
+  spreadplayers -283 -350 750 2000 false <player>
+  effect give <player> minecraft:slow_falling 15 1 true
+  effect give <player> minecraft:resistance 15 4 true
+  ```
+- **Rejection Action (Unauthorized):** Sends red `tellraw` warning prompting the player to complete `!gauntlet` first.
+
+### 1.4 `!wiki`
 - **Aliases:** `!repo`, `!github`, `!guide`, `!site`, `!web`
-- **Allowed Mode:** Any
-- **Description:** Sends a JSON formatted chat message with a clickable hyperlink to the official Boro Realm repository: `https://github.com/borocode/boro-realm`.
+- **Access Control:** `ANY`
+- **RCON Execution:** Emits a clickable `open_url` JSON `tellraw` linking to `https://github.com/borocode/boro-realm`.
 
----
-
-### `!help`
+### 1.5 `!help`
 - **Aliases:** `!commands`, `!cmd`, `?`
-- **Allowed Mode:** Any
-- **Description:** Prints the colored command reference table to the player's personal chat buffer.
+- **Access Control:** `ANY`
+- **RCON Execution:** Sends formatted command listing to the invoking player via `tellraw`.
 
----
-
-### `!ping`
+### 1.6 `!ping`
 - **Aliases:** `ping`, `test`, `you there?`
-- **Allowed Mode:** Any
-- **Description:** Tests the bridge daemon's responsiveness and verifies whether the background AI supervisor is active.
+- **Access Control:** `ANY`
+- **RCON Execution:** Sends `[BORO BRIDGE] PONG! Bridge online.` via `tellraw`.
 
 ---
 
-## 🛠️ Contributor & Agent Guide: Adding New Commands
+## 2. OPERATOR_ASYNC_INBOX_PROTOCOL
 
-To register a new command on Boro Realm:
-1. Open [`Projects/minecraft-server/bridge/bridge.py`](https://github.com/borocode/boro-realm).
-2. Locate the `handle_line(line)` function and the `CHAT_RE` parser.
-3. Add a new branch under `if c in (...):`.
-4. Execute any RCON or custom logic via `rcon.cmd(...)`.
-5. Update this `docs/commands.md` file and push to GitHub!
+When a sovereign operator (`OPS = {"steveXBT", ".rohG_oroB", "rohG_oroB"}`) sends a free-form chat message that does not match a built-in `!` command:
+
+1. `bridge.py` appends an entry to `/data/logs/operator_inbox.json`:
+   ```json
+   {
+     "timestamp": 1761336298.12,
+     "player": "steveXBT",
+     "message": "<raw message string>",
+     "processed": false
+   }
+   ```
+2. `bridge.py` immediately sends an in-game RCON confirmation:
+   ```text
+   [BORO BRIDGE] Operator message logged to AI inbox.
+   ```
+3. The autonomous maintenance loop reads `/data/logs/operator_inbox.json`, executes any requested world or server actions via RCON, replies directly in-game via `tellraw`, and updates `"processed": true`.
