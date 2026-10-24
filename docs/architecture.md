@@ -55,7 +55,8 @@ realm.boroghor.com                 play.boroghor.com                  play.borog
   - `MAX_PLAYERS: "20"`
   - `VIEW_DISTANCE: "10"`
   - `SIMULATION_DISTANCE: "8"`
-  - `ONLINE_MODE: "false"` (required for Floodgate/Geyser cross-play authentication)
+  - `ONLINE_MODE: "true"` (Mojang session auth for Java + Floodgate `auth-type: floodgate` Xbox Live auth for Bedrock)
+  - `BROADCAST_RCON_TO_OPS: "false"`
   - `ENABLE_RCON: "true"` (`RCON_PORT: 25575`)
 - **Plugin Stack (`/data/plugins`):**
   - `Geyser-Spigot.jar` — Translates Bedrock UDP (`19132/udp`) packets to Java protocol.

@@ -686,7 +686,7 @@ HOST_BOUNDARY | (:8767 -> :80)                         | (Bore TCP Tunnel)      
               <td><code>itzg/minecraft-server:latest</code></td>
               <td><code>25565/tcp</code>, <code>19132/udp</code>, <code>25575/tcp</code></td>
               <td><code>./data:/data</code></td>
-              <td>PaperMC 26.3, Aikar GC flags, <code>MODE=adventure</code>, <code>OPS=steveXBT</code>, <code>ONLINE_MODE=false</code>.</td>
+              <td>PaperMC 26.3, Aikar GC flags, <code>MODE=adventure</code>, <code>ONLINE_MODE=true</code>, <code>auth-type=floodgate</code>, <code>BROADCAST_RCON_TO_OPS=false</code>.</td>
             </tr>
             <tr>
               <td><code>boro-tunnel</code></td>
@@ -699,15 +699,15 @@ HOST_BOUNDARY | (:8767 -> :80)                         | (Bore TCP Tunnel)      
               <td><code>boro-bridge</code></td>
               <td><code>python:3.12-alpine</code></td>
               <td>Outbound RCON <code>25575/tcp</code></td>
-              <td><code>./bridge:/app</code>, <code>./data/logs:/data/logs</code></td>
-              <td>Executes <code>python -u /app/bridge.py</code>; 1.0s Gauntlet tick loop + log parser + <code>operator_inbox.json</code> relay.</td>
+              <td><code>./bridge:/app:ro</code>, <code>./data/logs:/data/logs</code>, <code>.rcon-cli.env:ro</code></td>
+              <td>Executes <code>python -u /app/bridge.py</code>; cryptographic UUID operator check + 1.0s Gauntlet tick loop + <code>operator_inbox.json</code> relay.</td>
             </tr>
             <tr>
               <td><code>boro-web</code></td>
               <td><code>nginx:alpine</code></td>
               <td><code>8767:80/tcp</code></td>
-              <td><code>../boro-realm:/usr/share/nginx/html:ro</code></td>
-              <td>Static specification datasheet server proxied via Cloudflare Tunnel to <code>realm.boroghor.com</code>.</td>
+              <td><code>../boro-realm:/usr/share/nginx/html:ro</code>, <code>./nginx.conf:ro</code></td>
+              <td>Static specification datasheet server (hardened headers + dotfile <code>404</code> block) proxied via Cloudflare Tunnel to <code>realm.boroghor.com</code>.</td>
             </tr>
           </tbody>
         </table>
