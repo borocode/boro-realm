@@ -683,31 +683,31 @@ HOST_BOUNDARY | (:8767 -> :80)                         | (Bore TCP Tunnel)      
           <tbody>
             <tr>
               <td><code>boro-minecraft</code></td>
-              <td><code>itzg/minecraft-server:latest</code></td>
+              <td><code>itzg/minecraft-server:latest@sha256:3168dfa3...</code></td>
               <td><code>25565/tcp</code>, <code>19132/udp</code>, <code>25575/tcp</code></td>
               <td><code>./data:/data</code></td>
-              <td>PaperMC 26.3, Aikar GC flags, <code>MODE=adventure</code>, <code>ONLINE_MODE=true</code>, <code>auth-type=floodgate</code>, <code>BROADCAST_RCON_TO_OPS=false</code>.</td>
+              <td>PaperMC 26.3, Aikar GC flags, <code>MODE=adventure</code>, <code>ONLINE_MODE=true</code>, <code>auth-type=floodgate</code>, <code>ENFORCE_SECURE_PROFILE=false</code>, <code>BROADCAST_RCON_TO_OPS=false</code>. Pinned digest.</td>
             </tr>
             <tr>
               <td><code>boro-tunnel</code></td>
-              <td><code>alpine:3.20</code></td>
+              <td><code>alpine:3.20@sha256:d9e853e8...</code></td>
               <td><code>network_mode: service:mc-crossplay</code></td>
-              <td><code>none</code></td>
-              <td>Runs persistent loop: <code>bore local 25565 --to bore.pub --port 43991</code>.</td>
+              <td><code>./data/bore:/usr/local/bin/bore:ro</code></td>
+              <td>Runs persistent loop: <code>bore local 25565 --local-host mc-crossplay --to bore.pub --port 43991</code>. Pinned digest.</td>
             </tr>
             <tr>
               <td><code>boro-bridge</code></td>
-              <td><code>python:3.12-alpine</code></td>
+              <td><code>python:3.12-alpine@sha256:b658b05c...</code></td>
               <td>Outbound RCON <code>25575/tcp</code></td>
               <td><code>./bridge:/app:ro</code>, <code>./data/logs:/data/logs</code>, <code>.rcon-cli.env:ro</code></td>
-              <td>Executes <code>python -u /app/bridge.py</code>; cryptographic UUID operator check + 1.0s Gauntlet tick loop + <code>operator_inbox.json</code> relay.</td>
+              <td>Executes <code>python -u /app/bridge.py</code>; strictly anchored log regexes (<code>^...$</code>), authoritative RCON NBT UUID evaluation, 1.0s Gauntlet tick loop, and <code>operator_inbox.json</code> relay. Pinned digest.</td>
             </tr>
             <tr>
               <td><code>boro-web</code></td>
-              <td><code>nginx:alpine</code></td>
+              <td><code>nginx:alpine@sha256:a3554c0d...</code></td>
               <td><code>8767:80/tcp</code></td>
               <td><code>../boro-realm:/usr/share/nginx/html:ro</code>, <code>./nginx.conf:ro</code></td>
-              <td>Static specification datasheet server (hardened headers + dotfile <code>404</code> block) proxied via Cloudflare Tunnel to <code>realm.boroghor.com</code>.</td>
+              <td>Static specification datasheet server (hardened headers + dotfile <code>404</code> block) proxied via Cloudflare Tunnel to <code>realm.boroghor.com</code>. Pinned digest.</td>
             </tr>
           </tbody>
         </table>

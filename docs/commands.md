@@ -11,10 +11,17 @@ RCON_TARGET : mc-crossplay:25575
 
 ## 1. COMMAND_DISPATCH_SPECIFICATION
 
-`bridge.py` parses every chat event matching:
+`bridge.py` parses log events with strictly anchored (`^...$`), injection-proof regexes:
 ```python
-CHAT_RE = re.compile(r"\[Async Chat Thread[^\]]*\]/INFO\]: (?:\[Not Secure\] )?<([^>]+)> (.*)")
+CHAT_RE = re.compile(r"^\[(\d{2}:\d{2}:\d{2})\] \[[^\]]*/INFO\]: (?:\[Not Secure\] )?<(\.?\w{1,16})> (.*)$")
+LOGIN_RE = re.compile(r"^\[(\d{2}:\d{2}:\d{2})\] \[Server thread/INFO\]: (\.?\w{1,16})\[/([^\]]+)\] logged in with entity id \d+ at \(.*\)$")
+LEAVE_RE = re.compile(r"^\[(\d{2}:\d{2}:\d{2})\] \[Server thread/INFO\]: (\.?\w{1,16}) left the game$")
+VALID_NAME_RE = re.compile(r"^\.?\w{1,16}$")
 ```
+
+Operator verification does not rely on chat log strings or spoofable text. It executes authoritative RCON queries (`data get entity <player> UUID`) directly into the entity NBT integer array to authenticate the player against the cryptographic whitelist:
+* `be6270ea-ec75-4761-9709-1dfe9e692488` (`steveXBT` Mojang UUID)
+* `00000000-0000-0000-0009-00000109025b` (`.rohG_oroB` Floodgate Xbox UUID)
 
 ### 1.1 `!estate`
 - **Aliases:** `!spawn`, `!hub`, `!home`, `!back`
